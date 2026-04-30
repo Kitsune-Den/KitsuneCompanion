@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xml>
+    <Name value="KitsuneCompanion" />
+    <DisplayName value="Kitsune Companion" />
+    <Version value="0.1.0" />
+    <Description value="Adds a kitsune fox companion with temperament, shrine rituals, and evolution forms. Weatherless v1." />
+    <Author value="Ada" />
+    <Website value="" />
+</xml>

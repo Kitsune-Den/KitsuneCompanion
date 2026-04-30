@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configs>
+
+    <append xpath="/entity_classes">
+
+        <entity_class name="kitsuneCompanion" extends="animalCoyote">
+
+            <property name="Tags" value="entity,animal,companion,fox,kitsune" />
+            <property name="UserSpawnType" value="Menu" />
+            <property name="IsEnemyEntity" value="false" />
+
+            <property name="MapIcon" value="" />
+            <property name="TrackerIcon" value="" />
+            <property name="CompassIcon" value="" />
+            <property name="CompassUpIcon" value="" />
+            <property name="CompassDownIcon" value="" />
+            <property name="NavObject" value="" />
+
+            <property name="Mass" value="60" />
+            <property name="Weight" value="60" />
+            <property name="SizeScale" value="0.75" />
+
+            <property name="MoveSpeed" value="0.55" />
+            <property name="MoveSpeedAggro" value="1.6" />
+            <property name="MoveSpeedRun" value="1.35" />
+            <property name="MoveSpeedPanic" value="1.7" />
+            <property name="JumpStrength" value="2.4" />
+            <property name="JumpMaxDistance" value="3" />
+
+            <property name="ExperienceGain" value="0" />
+            <property name="LootListOnDeath" value="" />
+
+            <property name="AITask-1" value="BreakBlock" />
+            <property name="AITask-2" value="" />
+            <property name="AITask-3" value="" />
+            <property name="AITask-4" value="ApproachAndAttackTarget" data="class=EntityZombie,20,EntityBandit,15" />
+            <property name="AITask-5" value="ApproachSpot" />
+            <property name="AITask-6" value="Look" />
+            <property name="AITask-7" value="Wander" />
+            <property name="AITask-8" value="" />
+
+            <property name="AITarget-1" value="SetAsTargetIfHurt" />
+            <property name="AITarget-2" value="BlockingTargetTask" />
+            <property name="AITarget-3" value="SetNearestEntityAsTarget" data="class=EntityZombie,0,-8,EntityBandit,0,-8" />
+            <property name="AITarget-4" value="" />
+
+            <effect_group name="Base Effects">
+                <passive_effect name="HealthMax" operation="base_set" value="120" />
+            </effect_group>
+
+        </entity_class>
+
+    </append>
+
+</configs>

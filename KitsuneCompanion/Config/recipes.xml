@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configs>
+
+    <append xpath="/recipes">
+
+        <!-- Ritual ingredients: craftable at any workbench -->
+        <recipe name="kitsuneSpiritEmber" count="1" craft_area="workbench" tags="learnable,workbenchCrafting">
+            <ingredient name="resourceCoal" count="5"/>
+            <ingredient name="resourceAnimalFat" count="2"/>
+            <ingredient name="resourcePaper" count="1"/>
+        </recipe>
+
+        <recipe name="kitsuneMoonlitResin" count="1" craft_area="workbench" tags="learnable,workbenchCrafting">
+            <ingredient name="resourceCloth" count="5"/>
+            <ingredient name="resourceGlue" count="1"/>
+            <ingredient name="drinkJarBoiledWater" count="1"/>
+        </recipe>
+
+        <recipe name="kitsuneFoxfireShard" count="1" craft_area="workbench" tags="learnable,workbenchCrafting">
+            <ingredient name="resourceMechanicalParts" count="3"/>
+            <ingredient name="resourceElectricParts" count="2"/>
+            <ingredient name="resourceBrokenGlass" count="3"/>
+        </recipe>
+
+        <recipe name="kitsuneDreamingSilk" count="1" craft_area="workbench" tags="learnable,workbenchCrafting">
+            <ingredient name="resourceCloth" count="10"/>
+            <ingredient name="resourceYuccaFibers" count="2"/>
+            <ingredient name="resourceFeather" count="3"/>
+        </recipe>
+
+        <!-- Shrine: gated behind crafting all four ritual ingredients first -->
+        <recipe name="kitsuneShrine" count="1" craft_area="workbench" tags="learnable,workbenchCrafting">
+            <ingredient name="kitsuneSpiritEmber" count="1"/>
+            <ingredient name="kitsuneMoonlitResin" count="1"/>
+            <ingredient name="kitsuneFoxfireShard" count="1"/>
+            <ingredient name="kitsuneDreamingSilk" count="1"/>
+            <ingredient name="resourceWood" count="30"/>
+            <ingredient name="resourceForgedIron" count="10"/>
+        </recipe>
+
+        <!-- Placeholder ritual recipe so the shrine UI isn't empty in testing.
+             Step 6 (bond system) will give the bond charm real triggered effects. -->
+        <recipe name="kitsuneBondCharm" count="1" craft_time="60" craft_area="kitsuneShrine" tags="kitsuneShrineCrafting">
+            <ingredient name="kitsuneSpiritEmber" count="1"/>
+            <ingredient name="kitsuneMoonlitResin" count="1"/>
+            <ingredient name="kitsuneFoxfireShard" count="1"/>
+            <ingredient name="kitsuneDreamingSilk" count="1"/>
+        </recipe>
+
+        <!-- Mist evolution ritual. -->
+        <recipe name="kitsuneMistTalisman" count="1" craft_time="120" craft_area="kitsuneShrine" tags="kitsuneShrineCrafting">
+            <ingredient name="kitsuneMoonlitResin" count="2"/>
+            <ingredient name="kitsuneFoxfireShard" count="1"/>
+            <ingredient name="kitsuneDreamingSilk" count="1"/>
+            <ingredient name="drinkJarBoiledWater" count="5"/>
+        </recipe>
+
+    </append>
+
+</configs>

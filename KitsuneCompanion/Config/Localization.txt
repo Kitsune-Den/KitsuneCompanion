@@ -1,0 +1,38 @@
+Key,File,Type,UsedInMainMenu,NoTranslate,english
+kitsuneCompanion,entityclasses,Entity,,,Kitsune
+buffKitsuneCuriousName,buffs,Buff,,,Curious
+buffKitsuneCuriousDesc,buffs,Buff,,,The kitsune watches, listens, and roams.
+buffKitsuneProtectiveName,buffs,Buff,,,Protective
+buffKitsuneProtectiveDesc,buffs,Buff,,,The kitsune is wary, close at hand, and ready to defend.
+buffKitsunePlayfulName,buffs,Buff,,,Playful
+buffKitsunePlayfulDesc,buffs,Buff,,,The kitsune darts and circles. Its presence quickens you.
+buffKitsunePlayfulAuraName,buffs,Buff,,,Quickened
+buffKitsunePlayfulAuraDesc,buffs,Buff,,,A playful kitsune nearby is restoring your stamina.
+buffKitsuneSereneName,buffs,Buff,,,Serene
+buffKitsuneSereneDesc,buffs,Buff,,,The kitsune is calm. Wounds close in its presence.
+buffKitsuneSereneAuraName,buffs,Buff,,,Soothed
+buffKitsuneSereneAuraDesc,buffs,Buff,,,A serene kitsune nearby is mending your wounds.
+kitsuneShrine,blocks,Block,,,Kitsune Shrine
+kitsuneShrineDesc,blocks,Block,,,A small ritual altar. Burn ritual offerings here to bond with and shape your kitsune companion.
+kitsuneSpiritEmber,items,Item,,,Spirit Ember
+kitsuneSpiritEmberDesc,items,Item,,,A coal that never quite cools. Required for kitsune rituals.
+kitsuneMoonlitResin,items,Item,,,Moonlit Resin
+kitsuneMoonlitResinDesc,items,Item,,,Sap that sets only under moonlight. Required for kitsune rituals.
+kitsuneFoxfireShard,items,Item,,,Foxfire Shard
+kitsuneFoxfireShardDesc,items,Item,,,A splinter of glass that hums faintly. Required for kitsune rituals.
+kitsuneDreamingSilk,items,Item,,,Dreaming Silk
+kitsuneDreamingSilkDesc,items,Item,,,Cloth woven slowly, in quiet rooms. Required for kitsune rituals.
+kitsuneBondCharm,items,Item,,,Bond Charm
+kitsuneBondCharmDesc,items,Item,,,A token of the bond between you and your kitsune. Carry near your kitsune to deepen the bond. Consumed on use.
+buffKitsuneBondTrustedName,buffs,Buff,,,Trusted
+buffKitsuneBondTrustedDesc,buffs,Buff,,,The kitsune trusts you. It carries itself a little more steadily.
+buffKitsuneBondDevotedName,buffs,Buff,,,Devoted
+buffKitsuneBondDevotedDesc,buffs,Buff,,,The kitsune is devoted. Wounds close even when at rest.
+buffKitsuneBondAwakenedName,buffs,Buff,,,Awakened
+buffKitsuneBondAwakenedDesc,buffs,Buff,,,The kitsune has fully awakened. Sturdier, swifter to mend, slower to fall.
+buffKitsuneFormMistName,buffs,Buff,,,Mist Form
+buffKitsuneFormMistDesc,buffs,Buff,,,The kitsune walks half in the world and half through it. Hops to your side from far away; veils you in mist when you crouch.
+buffKitsuneStealthAuraName,buffs,Buff,,,Mist-Veiled
+buffKitsuneStealthAuraDesc,buffs,Buff,,,The mist around your kitsune steadies your footing in stealth and dulls hunters' senses.
+kitsuneMistTalisman,items,Item,,,Mist Talisman
+kitsuneMistTalismanDesc,items,Item,,,Carry this near your kitsune to bind it to the Mist form. Consumed on bonding.

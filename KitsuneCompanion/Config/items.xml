@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configs>
+
+    <append xpath="/items">
+
+        <item name="kitsuneSpiritEmber">
+            <property name="HoldType" value="45"/>
+            <property name="Tags" value="junk,kitsuneRitualItem"/>
+            <property name="Meshfile" value="@:Other/Items/Misc/sackPrefab.prefab"/>
+            <property name="DropMeshfile" value="@:Other/Items/Misc/sack_droppedPrefab.prefab"/>
+            <property name="Material" value="Morganic"/>
+            <property name="Weight" value="5"/>
+            <property name="Stacknumber" value="50"/>
+            <property name="EconomicValue" value="120"/>
+            <property name="Group" value="Resources"/>
+        </item>
+
+        <item name="kitsuneMoonlitResin">
+            <property name="HoldType" value="45"/>
+            <property name="Tags" value="junk,kitsuneRitualItem"/>
+            <property name="Meshfile" value="@:Other/Items/Misc/sackPrefab.prefab"/>
+            <property name="DropMeshfile" value="@:Other/Items/Misc/sack_droppedPrefab.prefab"/>
+            <property name="Material" value="Morganic"/>
+            <property name="Weight" value="6"/>
+            <property name="Stacknumber" value="50"/>
+            <property name="EconomicValue" value="120"/>
+            <property name="Group" value="Resources"/>
+        </item>
+
+        <item name="kitsuneFoxfireShard">
+            <property name="HoldType" value="45"/>
+            <property name="Tags" value="junk,kitsuneRitualItem"/>
+            <property name="Meshfile" value="@:Other/Items/Misc/sackPrefab.prefab"/>
+            <property name="DropMeshfile" value="@:Other/Items/Misc/sack_droppedPrefab.prefab"/>
+            <property name="Material" value="Mglass"/>
+            <property name="Weight" value="4"/>
+            <property name="Stacknumber" value="50"/>
+            <property name="EconomicValue" value="150"/>
+            <property name="Group" value="Resources"/>
+        </item>
+
+        <item name="kitsuneDreamingSilk">
+            <property name="HoldType" value="45"/>
+            <property name="Tags" value="junk,kitsuneRitualItem"/>
+            <property name="Meshfile" value="@:Other/Items/Misc/sackPrefab.prefab"/>
+            <property name="DropMeshfile" value="@:Other/Items/Misc/sack_droppedPrefab.prefab"/>
+            <property name="Material" value="Mcloth"/>
+            <property name="Weight" value="3"/>
+            <property name="Stacknumber" value="50"/>
+            <property name="EconomicValue" value="120"/>
+            <property name="Group" value="Resources"/>
+        </item>
+
+        <!-- Mist evolution talisman. Consumed by the temperament manager when
+             a player carrying it stands within 8 blocks of a kitsune. -->
+        <item name="kitsuneMistTalisman">
+            <property name="HoldType" value="45"/>
+            <property name="Tags" value="junk,kitsuneRitualItem,kitsuneFormTalisman"/>
+            <property name="Meshfile" value="@:Other/Items/Misc/sackPrefab.prefab"/>
+            <property name="DropMeshfile" value="@:Other/Items/Misc/sack_droppedPrefab.prefab"/>
+            <property name="Material" value="Mglass"/>
+            <property name="Weight" value="2"/>
+            <property name="Stacknumber" value="10"/>
+            <property name="EconomicValue" value="800"/>
+            <property name="Group" value="Resources"/>
+        </item>
+
+        <!-- Placeholder ritual product. No effect yet — Step 5 (evolution paths)
+             and Step 6 (bond system) will give this item real triggered effects. -->
+        <item name="kitsuneBondCharm">
+            <property name="HoldType" value="45"/>
+            <property name="Tags" value="junk,kitsuneRitualItem,kitsuneBondCharm"/>
+            <property name="Meshfile" value="@:Other/Items/Misc/sackPrefab.prefab"/>
+            <property name="DropMeshfile" value="@:Other/Items/Misc/sack_droppedPrefab.prefab"/>
+            <property name="Material" value="Morganic"/>
+            <property name="Weight" value="2"/>
+            <property name="Stacknumber" value="10"/>
+            <property name="EconomicValue" value="600"/>
+            <property name="Group" value="Resources"/>
+        </item>
+
+    </append>
+
+</configs>

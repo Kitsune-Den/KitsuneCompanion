@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configs>
+
+    <append xpath="/buffs">
+
+        <!-- ============================================================
+             TEMPERAMENT: CURIOUS
+             Wanders, investigates. Self stamina regen so it can roam.
+             ============================================================ -->
+        <buff name="buffKitsuneCurious"
+              name_key="buffKitsuneCuriousName"
+              description_key="buffKitsuneCuriousDesc"
+              icon="ui_game_symbol_animal_tracker"
+              icon_color="180,220,255">
+            <stack_type value="replace"/>
+            <duration value="0"/>
+            <update_rate value="2"/>
+
+            <effect_group>
+                <passive_effect name="StaminaChangeOT" operation="base_add" value="1"/>
+            </effect_group>
+        </buff>
+
+        <!-- ============================================================
+             TEMPERAMENT: PROTECTIVE
+             Stays close, aggressive. Damage resistance for the kitsune.
+             Aggression behavior layered in via C# manager (Step 3).
+             ============================================================ -->
+        <buff name="buffKitsuneProtective"
+              name_key="buffKitsuneProtectiveName"
+              description_key="buffKitsuneProtectiveDesc"
+              icon="ui_game_symbol_defense"
+              icon_color="255,180,120">
+            <stack_type value="replace"/>
+            <duration value="0"/>
+            <update_rate value="2"/>
+
+            <effect_group>
+                <passive_effect name="DamageResist" operation="base_add" value="0.25"/>
+            </effect_group>
+        </buff>
+
+        <!-- ============================================================
+             TEMPERAMENT: PLAYFUL
+             Erratic. Stamina aura on nearby player.
+             ============================================================ -->
+        <buff name="buffKitsunePlayful"
+              name_key="buffKitsunePlayfulName"
+              description_key="buffKitsunePlayfulDesc"
+              icon="ui_game_symbol_agility"
+              icon_color="255,230,140">
+            <stack_type value="replace"/>
+            <duration value="0"/>
+            <update_rate value="2"/>
+
+            <effect_group>
+                <triggered_effect trigger="onSelfBuffUpdate" action="AddBuff"
+                                  target="selfAOE" range="8"
+                                  buff="buffKitsunePlayfulAura">
+                    <requirement name="EntityTagCompare" target="other" tags="player"/>
+                </triggered_effect>
+            </effect_group>
+        </buff>
+
+        <!-- Player-side aura: stamina regen while near a Playful kitsune.
+             Refreshed every 2s by buffKitsunePlayful's AOE tick. -->
+        <buff name="buffKitsunePlayfulAura"
+              name_key="buffKitsunePlayfulAuraName"
+              description_key="buffKitsunePlayfulAuraDesc"
+              icon="ui_game_symbol_agility"
+              icon_color="255,230,140">
+            <stack_type value="replace"/>
+            <duration value="4"/>
+
+            <effect_group>
+                <passive_effect name="StaminaChangeOT" operation="base_add" value="2"/>
+            </effect_group>
+        </buff>
+
+        <!-- ============================================================
+             TEMPERAMENT: SERENE
+             Calm, slow. Self health regen + health aura on nearby player.
+             ============================================================ -->
+        <buff name="buffKitsuneSerene"
+              name_key="buffKitsuneSereneName"
+              description_key="buffKitsuneSereneDesc"
+              icon="ui_game_symbol_twitch_regen"
+              icon_color="180,255,200">
+            <stack_type value="replace"/>
+            <duration value="0"/>
+            <update_rate value="2"/>
+
+            <effect_group>
+                <passive_effect name="HealthChangeOT" operation="base_add" value="1"/>
+
+                <triggered_effect trigger="onSelfBuffUpdate" action="AddBuff"
+                                  target="selfAOE" range="8"
+                                  buff="buffKitsuneSereneAura">
+                    <requirement name="EntityTagCompare" target="other" tags="player"/>
+                </triggered_effect>
+            </effect_group>
+        </buff>
+
+        <!-- Player-side aura: gentle health regen while near a Serene kitsune. -->
+        <buff name="buffKitsuneSereneAura"
+              name_key="buffKitsuneSereneAuraName"
+              description_key="buffKitsuneSereneAuraDesc"
+              icon="ui_game_symbol_twitch_regen"
+              icon_color="180,255,200">
+            <stack_type value="replace"/>
+            <duration value="4"/>
+
+            <effect_group>
+                <passive_effect name="HealthChangeOT" operation="base_add" value="0.5"/>
+            </effect_group>
+        </buff>
+
+        <!-- ============================================================
+             EVOLUTION FORM: MIST
+             Persistent form. Coexists with temperament buffs.
+             Applied via kitsuneMistTalisman; removed only when player
+             applies a different form.
+             ============================================================ -->
+        <buff name="buffKitsuneFormMist"
+              name_key="buffKitsuneFormMistName"
+              description_key="buffKitsuneFormMistDesc"
+              icon="ui_game_symbol_wind"
+              icon_color="200,220,255">
+            <stack_type value="replace"/>
+            <duration value="0"/>
+            <update_rate value="2"/>
+
+            <effect_group>
+                <triggered_effect trigger="onSelfBuffUpdate" action="AddBuff"
+                                  target="selfAOE" range="10"
+                                  buff="buffKitsuneStealthAura">
+                    <requirement name="EntityTagCompare" target="other" tags="player"/>
+                </triggered_effect>
+            </effect_group>
+        </buff>
+
+        <!-- ============================================================
+             BOND TIERS
+             Mutually exclusive marker buffs reflecting kitsune's bond
+             with player. Each carries the CUMULATIVE bonus for its tier;
+             upgrading replaces (not stacks).
+             ============================================================ -->
+        <buff name="buffKitsuneBondTrusted"
+              name_key="buffKitsuneBondTrustedName"
+              description_key="buffKitsuneBondTrustedDesc"
+              icon="ui_game_symbol_allies"
+              icon_color="220,220,255">
+            <stack_type value="replace"/>
+            <duration value="0"/>
+
+            <effect_group>
+                <passive_effect name="HealthMax" operation="perc_add" value="0.10"/>
+            </effect_group>
+        </buff>
+
+        <buff name="buffKitsuneBondDevoted"
+              name_key="buffKitsuneBondDevotedName"
+              description_key="buffKitsuneBondDevotedDesc"
+              icon="ui_game_symbol_allies"
+              icon_color="255,220,160">
+            <stack_type value="replace"/>
+            <duration value="0"/>
+
+            <effect_group>
+                <passive_effect name="HealthMax" operation="perc_add" value="0.20"/>
+                <passive_effect name="HealthChangeOT" operation="base_add" value="1"/>
+            </effect_group>
+        </buff>
+
+        <buff name="buffKitsuneBondAwakened"
+              name_key="buffKitsuneBondAwakenedName"
+              description_key="buffKitsuneBondAwakenedDesc"
+              icon="ui_game_symbol_allies"
+              icon_color="255,200,120">
+            <stack_type value="replace"/>
+            <duration value="0"/>
+
+            <effect_group>
+                <passive_effect name="HealthMax" operation="perc_add" value="0.30"/>
+                <passive_effect name="HealthChangeOT" operation="base_add" value="2"/>
+                <passive_effect name="DamageResist" operation="base_add" value="0.10"/>
+            </effect_group>
+        </buff>
+
+        <!-- Player-side stealth proxy. V2.6 has no direct "stealth" modifier;
+             use CrouchSpeed boost + EnemySearchDuration cut as the
+             closest mechanical equivalent. -->
+        <buff name="buffKitsuneStealthAura"
+              name_key="buffKitsuneStealthAuraName"
+              description_key="buffKitsuneStealthAuraDesc"
+              icon="ui_game_symbol_wind"
+              icon_color="200,220,255">
+            <stack_type value="replace"/>
+            <duration value="4"/>
+
+            <effect_group>
+                <passive_effect name="CrouchSpeed" operation="perc_add" value="0.25"/>
+                <passive_effect name="EnemySearchDuration" operation="perc_add" value="-0.25"/>
+            </effect_group>
+        </buff>
+
+    </append>
+
+</configs>

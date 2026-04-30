@@ -1,0 +1,35 @@
+# --- .NET / Visual Studio / Rider build artifacts ---
+bin/
+obj/
+*.dll
+*.pdb
+*.suo
+*.user
+*.userosscache
+*.cache
+*.lock.json
+.vs/
+.vscode/
+.idea/
+
+# --- Test results ---
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+
+# --- Workspace ---
+# Local working area: contains TFP-extracted vanilla textures (IP) and
+# machine-specific scripts. Not for distribution.
+Workspace/
+
+# --- OS noise ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Local secrets / env ---
+.env
+.env.local
+*.local
