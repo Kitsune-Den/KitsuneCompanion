@@ -6,6 +6,7 @@
         <!-- ============================================================
              TEMPERAMENT: CURIOUS
              Wanders, investigates. Self stamina regen so it can roam.
+             Player-side aura: small XP gain bonus — its curiosity rubs off.
              ============================================================ -->
         <buff name="buffKitsuneCurious"
               name_key="buffKitsuneCuriousName"
@@ -18,12 +19,33 @@
 
             <effect_group>
                 <passive_effect name="StaminaChangeOT" operation="base_add" value="1"/>
+
+                <triggered_effect trigger="onSelfBuffUpdate" action="AddBuff"
+                                  target="selfAOE" range="8"
+                                  buff="buffKitsuneCuriousAura">
+                    <requirement name="EntityTagCompare" target="other" tags="player"/>
+                </triggered_effect>
+            </effect_group>
+        </buff>
+
+        <!-- Player-side aura: XP gain bonus while near a Curious kitsune. -->
+        <buff name="buffKitsuneCuriousAura"
+              name_key="buffKitsuneCuriousAuraName"
+              description_key="buffKitsuneCuriousAuraDesc"
+              icon="ui_game_symbol_animal_tracker"
+              icon_color="180,220,255">
+            <stack_type value="replace"/>
+            <duration value="4"/>
+
+            <effect_group>
+                <passive_effect name="PlayerExpGain" operation="perc_add" value="0.05"/>
             </effect_group>
         </buff>
 
         <!-- ============================================================
              TEMPERAMENT: PROTECTIVE
              Stays close, aggressive. Damage resistance for the kitsune.
+             Player-side aura: small damage resist — it's watching your back.
              Aggression behavior layered in via C# manager (Step 3).
              ============================================================ -->
         <buff name="buffKitsuneProtective"
@@ -37,6 +59,26 @@
 
             <effect_group>
                 <passive_effect name="DamageResist" operation="base_add" value="0.25"/>
+
+                <triggered_effect trigger="onSelfBuffUpdate" action="AddBuff"
+                                  target="selfAOE" range="8"
+                                  buff="buffKitsuneProtectiveAura">
+                    <requirement name="EntityTagCompare" target="other" tags="player"/>
+                </triggered_effect>
+            </effect_group>
+        </buff>
+
+        <!-- Player-side aura: small damage resist while near a Protective kitsune. -->
+        <buff name="buffKitsuneProtectiveAura"
+              name_key="buffKitsuneProtectiveAuraName"
+              description_key="buffKitsuneProtectiveAuraDesc"
+              icon="ui_game_symbol_defense"
+              icon_color="255,180,120">
+            <stack_type value="replace"/>
+            <duration value="4"/>
+
+            <effect_group>
+                <passive_effect name="DamageResist" operation="base_add" value="0.05"/>
             </effect_group>
         </buff>
 

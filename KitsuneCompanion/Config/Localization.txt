@@ -2,8 +2,12 @@ Key,File,Type,UsedInMainMenu,NoTranslate,english
 kitsuneCompanion,entityclasses,Entity,,,Kitsune
 buffKitsuneCuriousName,buffs,Buff,,,Curious
 buffKitsuneCuriousDesc,buffs,Buff,,,The kitsune watches, listens, and roams.
+buffKitsuneCuriousAuraName,buffs,Buff,,,Inquisitive
+buffKitsuneCuriousAuraDesc,buffs,Buff,,,A curious kitsune nearby — its attention sharpens yours.
 buffKitsuneProtectiveName,buffs,Buff,,,Protective
 buffKitsuneProtectiveDesc,buffs,Buff,,,The kitsune is wary, close at hand, and ready to defend.
+buffKitsuneProtectiveAuraName,buffs,Buff,,,Guarded
+buffKitsuneProtectiveAuraDesc,buffs,Buff,,,A protective kitsune nearby — it watches what you cannot.
 buffKitsunePlayfulName,buffs,Buff,,,Playful
 buffKitsunePlayfulDesc,buffs,Buff,,,The kitsune darts and circles. Its presence quickens you.
 buffKitsunePlayfulAuraName,buffs,Buff,,,Quickened
