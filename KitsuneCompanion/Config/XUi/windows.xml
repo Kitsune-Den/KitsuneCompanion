@@ -17,6 +17,82 @@
     -->
     <append xpath="/windows">
 
+        <!-- ============================================================
+             KITSUNE COMPANION PANEL — Step 8b Phase 2a skeleton
+             ============================================================
+             Sidebar window for the inventory/character screen.
+             panel="Right" docks it on the right; window_group registration
+             in xui.xml ensures it opens with the character screen.
+             Phase 2a = minimal — title bar + placeholder rows.
+             Phase 2b = data binding via XUiC_KitsuneCompanionPanel.
+             Phase 2c = Feed/Pet/Recall action buttons + handlers.
+        -->
+        <window name="windowKitsuneCompanionPanel"
+                width="327" height="704"
+                panel="Right"
+                cursor_area="true">
+
+            <!-- Header bar -->
+            <panel name="header" height="43" depth="1" backgroundspritename="ui_game_panel_header">
+                <sprite depth="2" name="windowIcon" style="icon32px" pos="5,-5"
+                        sprite="ui_game_symbol_animal_tracker" color="111,234,255,255"/>
+                <label depth="2" name="title" pos="42,-6" width="280" height="32"
+                       text="KITSUNE COMPANION" font_size="28" color="220,220,220,255"/>
+            </panel>
+
+            <!-- Body -->
+            <rect pos="0,-46" width="327" height="658">
+                <sprite depth="1" name="background" color="25,25,25,240" type="sliced"/>
+
+                <!-- Form row -->
+                <rect pos="9,-9" width="309" height="60">
+                    <sprite depth="2" name="border" color="0,0,0,128" type="sliced"/>
+                    <label depth="3" pos="9,-6" width="100" height="22"
+                           text="FORM" font_size="18" color="200,160,80,255"/>
+                    <label depth="3" pos="9,-30" width="290" height="22"
+                           text="Manifested" font_size="22" color="111,234,255,220"/>
+                </rect>
+
+                <!-- Temperament row -->
+                <rect pos="9,-75" width="309" height="60">
+                    <sprite depth="2" name="border" color="0,0,0,128" type="sliced"/>
+                    <label depth="3" pos="9,-6" width="200" height="22"
+                           text="TEMPERAMENT" font_size="18" color="200,160,80,255"/>
+                    <label depth="3" pos="9,-30" width="290" height="22"
+                           text="Curious" font_size="22" color="220,220,220,255"/>
+                </rect>
+
+                <!-- Bond row -->
+                <rect pos="9,-141" width="309" height="60">
+                    <sprite depth="2" name="border" color="0,0,0,128" type="sliced"/>
+                    <label depth="3" pos="9,-6" width="100" height="22"
+                           text="BOND" font_size="18" color="200,160,80,255"/>
+                    <label depth="3" pos="9,-30" width="200" height="22"
+                           text="Familiar 40%" font_size="22" color="111,234,255,220"/>
+                </rect>
+
+                <!-- Companion Actions row (placeholder buttons, wired in Phase 2c) -->
+                <rect pos="9,-207" width="309" height="80">
+                    <sprite depth="2" name="border" color="0,0,0,128" type="sliced"/>
+                    <label depth="3" pos="9,-6" width="200" height="22"
+                           text="COMPANION ACTIONS" font_size="18" color="200,160,80,255"/>
+                    <label depth="3" pos="9,-50" width="290" height="22"
+                           text="(Feed / Pet / Recall — Phase 2c)" font_size="14" color="120,120,120,220"/>
+                </rect>
+
+                <!-- Companion Perks row -->
+                <rect pos="9,-293" width="309" height="80">
+                    <sprite depth="2" name="border" color="0,0,0,128" type="sliced"/>
+                    <label depth="3" pos="9,-6" width="200" height="22"
+                           text="COMPANION PERKS" font_size="18" color="200,160,80,255"/>
+                    <label depth="3" pos="9,-50" width="290" height="22"
+                           text="(Resource Sense, Night Prowl, Pack Instinct)"
+                           font_size="14" color="120,120,120,220"/>
+                </rect>
+
+            </rect>
+        </window>
+
         <window name="HUDKitsuneStatusStrip"
                 anchor="LeftBottom"
                 controller="KitsuneCompanion.XUiC_KitsuneStatusStrip, KitsuneCompanion">

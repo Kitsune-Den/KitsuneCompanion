@@ -10,4 +10,10 @@
         <window name="HUDKitsuneStatusStrip" />
     </append>
 
+    <!-- Add the kitsune companion panel to the character window_group so
+         it opens alongside the inventory grid + character frame. -->
+    <append xpath="/xui/ruleset[@name='default']/window_group[@name='character']">
+        <window name="windowKitsuneCompanionPanel" />
+    </append>
+
 </configs>
