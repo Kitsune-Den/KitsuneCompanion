@@ -18,21 +18,33 @@ namespace KitsuneCompanion
             var alives = world.EntityAlives;
             if (alives == null) return;
 
+            bool diagThisTick = (_diagTickCount % 5 == 0);
+            var classDump = diagThisTick ? new System.Text.StringBuilder() : null;
             int kitsuneSeen = 0;
+
             for (int i = 0; i < alives.Count; i++)
             {
                 var alive = alives[i];
-                if (alive != null && IsKitsune(alive))
+                if (alive == null) continue;
+
+                if (diagThisTick)
+                {
+                    string cn = alive.entityClass > 0
+                        ? EntityClass.GetEntityClassName(alive.entityClass)
+                        : "(noclass)";
+                    classDump.Append($" [{i}:'{cn}' id={alive.entityId}]");
+                }
+
+                if (IsKitsune(alive))
                 {
                     kitsuneSeen++;
                     UpdateKitsune(alive, world);
                 }
             }
 
-            // One log per 5 ticks (~every 10s) so we can verify the tick loop
-            // is alive and seeing kitsune. Remove once follow is confirmed.
-            if (_diagTickCount++ % 5 == 0)
-                Log.Out($"[KitsuneCompanion] diag.tick: alives={alives.Count} kitsuneSeen={kitsuneSeen}");
+            if (diagThisTick)
+                Log.Out($"[KitsuneCompanion] diag.tick: alives={alives.Count} kitsuneSeen={kitsuneSeen} entries={classDump}");
+            _diagTickCount++;
         }
 
         private static bool IsKitsune(EntityAlive alive)
