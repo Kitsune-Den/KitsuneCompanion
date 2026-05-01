@@ -60,7 +60,7 @@
             <update_rate value="2"/>
 
             <effect_group>
-                <passive_effect name="DamageResist" operation="base_add" value="0.25"/>
+                <passive_effect name="GeneralDamageResist" operation="base_add" value="0.25"/>
 
                 <triggered_effect trigger="onSelfBuffStart" action="PlaySound" sound="wolfalert"/>
 
@@ -82,7 +82,7 @@
             <duration value="4"/>
 
             <effect_group>
-                <passive_effect name="DamageResist" operation="base_add" value="0.05"/>
+                <passive_effect name="GeneralDamageResist" operation="base_add" value="0.05"/>
             </effect_group>
         </buff>
 
@@ -246,7 +246,7 @@
             <effect_group>
                 <passive_effect name="HealthMax" operation="perc_add" value="0.30"/>
                 <passive_effect name="HealthChangeOT" operation="base_add" value="2"/>
-                <passive_effect name="DamageResist" operation="base_add" value="0.10"/>
+                <passive_effect name="GeneralDamageResist" operation="base_add" value="0.10"/>
             </effect_group>
         </buff>
 
