@@ -43,5 +43,20 @@ namespace KitsuneCompanion.Tests
             Assert.Equal(0, BondRules.Tier(0f));
             Assert.Equal(1, BondRules.Tier(0f + BondRules.BondPerCharm));
         }
+
+        [Theory]
+        [InlineData(-5f,    0f)]   // negative clamped to 0
+        [InlineData(0f,     0f)]   // tier 0 floor
+        [InlineData(5f,     0.5f)] // tier 0 midpoint
+        [InlineData(10f,    0f)]   // tier 1 floor (just entered Trusted)
+        [InlineData(30f,    0.5f)] // tier 1 midpoint
+        [InlineData(50f,    0f)]   // tier 2 floor (just entered Devoted)
+        [InlineData(125f,   0.5f)] // tier 2 midpoint
+        [InlineData(200f,   1f)]   // tier 3 (Awakened) — max tier returns 1
+        [InlineData(9999f,  1f)]   // max tier holds at 1
+        public void TierProgress_FractionalPositionWithinTier(float points, float expected)
+        {
+            Assert.Equal(expected, BondRules.TierProgress(points), precision: 4);
+        }
     }
 }

@@ -38,5 +38,26 @@ namespace KitsuneCompanion
                 default: return null;
             }
         }
+
+        // Fractional position within the current tier in [0, 1].
+        // 0.0 means just entered this tier; 1.0 means at the next-tier
+        // threshold. Max tier (Awakened) always returns 1.0.
+        public static float TierProgress(float bondPoints)
+        {
+            if (bondPoints <= 0f) return 0f;
+
+            float lower, upper;
+            switch (Tier(bondPoints))
+            {
+                case 0: lower = 0f;                upper = ThresholdTrusted;  break;
+                case 1: lower = ThresholdTrusted;  upper = ThresholdDevoted;  break;
+                case 2: lower = ThresholdDevoted;  upper = ThresholdAwakened; break;
+                default: return 1f;
+            }
+
+            float span = upper - lower;
+            if (span <= 0f) return 1f;
+            return (bondPoints - lower) / span;
+        }
     }
 }
