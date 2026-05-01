@@ -30,20 +30,19 @@
             <property name="ExperienceGain" value="0" />
             <property name="LootListOnDeath" value="" />
 
-            <!-- Task slots inherit from animalCoyote / animalWolf except the
-                 AttackTarget filter which we override to remove EntityPlayer.
-                 We deliberately do NOT set AITask-2 / AITask-3 to empty —
-                 the V2.6 AI parser treats an empty value as "stop iterating
-                 tasks" rather than "skip slot," which silently breaks
-                 ApproachSpot (slot 5) and we lose follow entirely.
-                 Companion side-effects of inherited Territorial /
-                 RunawayWhenHurt are minor and can be tuned later. -->
+            <!-- Inherit AITask slots from animalCoyote / animalWolf except the
+                 AttackTarget filter (remove EntityPlayer from chase list). -->
             <property name="AITask-4" value="ApproachAndAttackTarget" data="class=EntityZombie,20,EntityBandit,15" />
-
-            <!-- Same caveat: inherit AITarget slots from coyote/wolf except
-                 the SetNearestEntityAsTarget filter (remove EntityPlayer
-                 from attack-target list). Don't blank slot 4. -->
             <property name="AITarget-3" value="SetNearestEntityAsTarget" data="class=EntityZombie,0,-8,EntityBandit,0,-8" />
+
+            <!-- Use SCore's Utility AI for follow behavior. The vanilla EAI
+                 system has no follow task and direct movement APIs bypass
+                 the animator (visible as "fox slide"). SCore's FollowSDX
+                 task implements proper animator-aware pathfinding via
+                 PathFinderThread. Activates when CompanionTicker sets the
+                 Leader cvar (player entityId) + CurrentOrder cvar (1=Follow)
+                 on the kitsune each fast tick. Requires 0-SCore mod. -->
+            <property name="AIPackages" value="KitsuneCompanionAI" />
 
             <effect_group name="Base Effects">
                 <passive_effect name="HealthMax" operation="base_set" value="120" />

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configs>
+
+    <!-- Custom Utility AI package for the kitsune companion. Uses SCore's
+         proven FollowSDX task instead of trying to fight vanilla EAI tasks.
+         CompanionTicker sets the Leader cvar (player's entityId) and the
+         CurrentOrder cvar (1=Follow) on the kitsune; SCore's task picks
+         those up and pathfinds properly with animator integration. -->
+    <append xpath="/utility_ai/ai_packages">
+
+        <ai_package name="KitsuneCompanionAI">
+            <action name="LeaderFollow" weight="2">
+                <task class="FollowSDX, SCore"/>
+                <consideration class="HasOrder, SCore" order="Follow"/>
+                <consideration class="TargetDistance" min="2.5" max="60" curve="threshold"/>
+            </action>
+        </ai_package>
+
+    </append>
+
+</configs>

@@ -36,50 +36,93 @@ namespace KitsuneCompanion
                 Log.Out($"[KitsuneCompanion] tick: alives={alives.Count} kitsuneSeen={kitsuneSeen}");
         }
 
-        // Fast tick (0.25s cadence in ModApi): just refreshes the follow
-        // investigate-position. Outruns the Wander AI task (priority 7) so
-        // ApproachSpot (priority 5) wins consistently. Wander only got
-        // turns at 2s when our investigate-position was satisfied/expired.
+        // Fast tick (0.25s cadence): one-kitsune-per-player binding via
+        // SCore Utility AI. Each player claims their nearest kitsune within
+        // FollowMaxRange; that kitsune gets Leader+CurrentOrder set. Any
+        // kitsune NOT claimed by a player has its follow cvars cleared so
+        // it idles instead of pursuing whoever happens to walk by.
         public static void TickFollow(World world)
         {
             var alives = world.EntityAlives;
             if (alives == null) return;
+            var players = world.GetPlayers();
+            if (players == null) return;
 
+            // Collect kitsune list once.
+            var kitsunes = new System.Collections.Generic.List<EntityAlive>();
             for (int i = 0; i < alives.Count; i++)
             {
                 var alive = alives[i];
-                if (alive == null || !IsKitsune(alive)) continue;
+                if (alive != null && IsKitsune(alive)) kitsunes.Add(alive);
+            }
 
-                var player = world.GetClosestPlayer(alive.position, FollowMaxRange, false);
-                if (player == null) continue;
+            // Each player claims their closest kitsune (within FollowMaxRange).
+            var claimed = new System.Collections.Generic.HashSet<int>();
+            for (int p = 0; p < players.Count; p++)
+            {
+                var player = players[p];
+                if (player == null || player.IsDead()) continue;
 
-                float dist = Vector3.Distance(alive.position, player.position);
-                float teleport = EvolutionRules.GetTeleportDistance(ActiveForm(alive));
+                EntityAlive nearest = null;
+                float bestDist = FollowMaxRange;
+                for (int k = 0; k < kitsunes.Count; k++)
+                {
+                    var ks = kitsunes[k];
+                    if (claimed.Contains(ks.entityId)) continue;
+                    float d = Vector3.Distance(ks.position, player.position);
+                    if (d < bestDist)
+                    {
+                        bestDist = d;
+                        nearest = ks;
+                    }
+                }
+                if (nearest == null) continue;
+                claimed.Add(nearest.entityId);
+                ApplyFollow(nearest, player, bestDist);
+            }
 
-                if (dist > teleport)
-                {
-                    alive.SetPosition(player.position + TeleportOffset(player), true);
-                    if (alive.moveHelper != null) alive.moveHelper.Stop();
-                    alive.ClearInvestigatePosition();
-                }
-                else if (dist > FollowStartDistance)
-                {
-                    // Use the AI target system. ApproachAndAttackTarget
-                    // (priority 4) is the AI task that animates wolves
-                    // properly when they chase players. By manually
-                    // setting attackTarget = player, that task engages
-                    // and walks naturally. Side effect: the kitsune will
-                    // attack the player on contact — handled separately
-                    // via 0-damage hand item once walk is confirmed.
-                    alive.SetAttackTarget(player, 30);
-                }
-                else
-                {
-                    // Within follow distance — clear target so the kitsune
-                    // doesn't keep snapping at heels.
-                    if (alive.GetAttackTarget() == player)
-                        alive.SetAttackTarget(null, 0);
-                }
+            // Unclaimed kitsune — clear follow state so they idle.
+            for (int k = 0; k < kitsunes.Count; k++)
+            {
+                var ks = kitsunes[k];
+                if (claimed.Contains(ks.entityId)) continue;
+                var buffs = ks.Buffs;
+                if (buffs == null) continue;
+                if (buffs.HasCustomVar("CurrentOrder"))
+                    buffs.SetCustomVar("CurrentOrder", 0f, false, CVarOperation.set);
+                if (buffs.HasCustomVar("Leader"))
+                    buffs.RemoveCustomVar("Leader");
+            }
+        }
+
+        private static void ApplyFollow(EntityAlive alive, EntityPlayer player, float dist)
+        {
+            float teleport = EvolutionRules.GetTeleportDistance(ActiveForm(alive));
+
+            if (dist > teleport)
+            {
+                alive.SetPosition(player.position + TeleportOffset(player), true);
+                if (alive.moveHelper != null) alive.moveHelper.Stop();
+                alive.ClearInvestigatePosition();
+                return;
+            }
+
+            var buffs = alive.Buffs;
+            if (buffs == null) return;
+
+            if (dist > FollowStartDistance)
+            {
+                // SCore Utility AI: Leader cvar = player.entityId,
+                // CurrentOrder cvar = 1 (Follow). FollowSDX picks these up
+                // and pathfinds via PathFinderThread with animator integration.
+                buffs.SetCustomVar("Leader", (float)player.entityId, false, CVarOperation.set);
+                buffs.SetCustomVar("CurrentOrder", 1f, false, CVarOperation.set);
+            }
+            else
+            {
+                // Within follow distance — clear order so FollowSDX disengages.
+                if (buffs.HasCustomVar("CurrentOrder"))
+                    buffs.SetCustomVar("CurrentOrder", 0f, false, CVarOperation.set);
             }
         }
 
