@@ -9,6 +9,13 @@
             <property name="UserSpawnType" value="Menu" />
             <property name="IsEnemyEntity" value="false" />
 
+            <!-- Step 9 Phase 1: swap the wolf-derived mesh for our custom fox
+                 prefab. Animator parameter mismatch is expected on first try
+                 (Red Fox controller doesn't speak 7DTD's Speed/IsAttacking
+                 schema) — the goal here is just to confirm the bundle loads
+                 and the fox mesh renders. Animation rewiring comes next. -->
+            <property name="Prefab" value="#@modfolder:Resources/Bundles/Kitsune.unity3d?Fox" />
+
             <property name="MapIcon" value="" />
             <property name="TrackerIcon" value="" />
             <property name="CompassIcon" value="" />
@@ -18,7 +25,11 @@
 
             <property name="Mass" value="60" />
             <property name="Weight" value="60" />
-            <property name="SizeScale" value="0.75" />
+            <!-- SizeScale tuned by visual iteration on the Red Fox prefab.
+                 0.75 = chibi (ankle-high). 2.5 = direfox (wolf-size, head
+                 at player's belly). 1.5 lands at "small dog / large fox"
+                 — reads as a real fox with companion presence. Adjust by eye. -->
+            <property name="SizeScale" value="1.5" />
 
             <property name="MoveSpeed" value="0.55" />
             <property name="MoveSpeedAggro" value="1.6" />

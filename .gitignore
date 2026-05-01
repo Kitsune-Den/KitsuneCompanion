@@ -24,6 +24,11 @@ TestResults/
 # machine-specific scripts. Not for distribution.
 Workspace/
 
+# --- Unity asset bundles (rebuildable from Unity project) ---
+# Bundle binaries are 20+ MB and rebuilt on each Unity export.
+# The Unity project is the source of truth; bundles are build artifacts.
+KitsuneCompanion/Resources/Bundles/
+
 # --- OS noise ---
 .DS_Store
 Thumbs.db
