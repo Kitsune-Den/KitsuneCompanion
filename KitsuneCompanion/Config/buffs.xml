@@ -20,6 +20,8 @@
             <effect_group>
                 <passive_effect name="StaminaChangeOT" operation="base_add" value="1"/>
 
+                <triggered_effect trigger="onSelfBuffStart" action="PlaySound" sound="wolfsense"/>
+
                 <triggered_effect trigger="onSelfBuffUpdate" action="AddBuff"
                                   target="selfAOE" range="8"
                                   buff="buffKitsuneCuriousAura">
@@ -60,6 +62,8 @@
             <effect_group>
                 <passive_effect name="DamageResist" operation="base_add" value="0.25"/>
 
+                <triggered_effect trigger="onSelfBuffStart" action="PlaySound" sound="wolfalert"/>
+
                 <triggered_effect trigger="onSelfBuffUpdate" action="AddBuff"
                                   target="selfAOE" range="8"
                                   buff="buffKitsuneProtectiveAura">
@@ -96,6 +100,8 @@
             <update_rate value="2"/>
 
             <effect_group>
+                <triggered_effect trigger="onSelfBuffStart" action="PlaySound" sound="coyoteroam"/>
+
                 <triggered_effect trigger="onSelfBuffUpdate" action="AddBuff"
                                   target="selfAOE" range="8"
                                   buff="buffKitsunePlayfulAura">
@@ -134,6 +140,8 @@
 
             <effect_group>
                 <passive_effect name="HealthChangeOT" operation="base_add" value="1"/>
+
+                <triggered_effect trigger="onSelfBuffStart" action="PlaySound" sound="wolfgiveup"/>
 
                 <triggered_effect trigger="onSelfBuffUpdate" action="AddBuff"
                                   target="selfAOE" range="8"
