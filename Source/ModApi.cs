@@ -4,8 +4,15 @@ namespace KitsuneCompanion
 {
     public class ModApi : IModApi
     {
-        private const float TickInterval = 2f;
-        private static float _nextTick;
+        // Heavy tick (skin/talisman/charm/bond/temperament/tier) — 2s.
+        // Bond accrual rate is calibrated against this cadence.
+        private const float HeavyTickInterval = 2f;
+        // Fast tick (follow only) — 0.25s. Outruns the entity's Wander AI
+        // task so ApproachSpot wins consistently. Cheap.
+        private const float FollowTickInterval = 0.25f;
+
+        private static float _nextHeavyTick;
+        private static float _nextFollowTick;
 
         public static string ModPath { get; private set; }
 
@@ -24,10 +31,18 @@ namespace KitsuneCompanion
             if (world == null) return;
 
             float now = Time.time;
-            if (now < _nextTick) return;
-            _nextTick = now + TickInterval;
 
-            CompanionTicker.Tick(world);
+            if (now >= _nextFollowTick)
+            {
+                _nextFollowTick = now + FollowTickInterval;
+                CompanionTicker.TickFollow(world);
+            }
+
+            if (now >= _nextHeavyTick)
+            {
+                _nextHeavyTick = now + HeavyTickInterval;
+                CompanionTicker.Tick(world);
+            }
         }
     }
 }

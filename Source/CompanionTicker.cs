@@ -13,6 +13,9 @@ namespace KitsuneCompanion
 
         private static int _diagTickCount;
 
+        // Heavy tick (2s cadence in ModApi): skin, talisman, charm, bond
+        // accrual, tier swap, temperament selection. Bond accrual rate is
+        // calibrated against this cadence — don't tick this faster.
         public static void Tick(World world)
         {
             var alives = world.EntityAlives;
@@ -29,10 +32,48 @@ namespace KitsuneCompanion
                 }
             }
 
-            // Slim diag — verifies tick alive and kitsune count. Remove
-            // entirely once follow + temperament confirmed end-to-end.
             if (_diagTickCount++ % 15 == 0)
                 Log.Out($"[KitsuneCompanion] tick: alives={alives.Count} kitsuneSeen={kitsuneSeen}");
+        }
+
+        // Fast tick (0.25s cadence in ModApi): just refreshes the follow
+        // investigate-position. Outruns the Wander AI task (priority 7) so
+        // ApproachSpot (priority 5) wins consistently. Wander only got
+        // turns at 2s when our investigate-position was satisfied/expired.
+        public static void TickFollow(World world)
+        {
+            var alives = world.EntityAlives;
+            if (alives == null) return;
+
+            for (int i = 0; i < alives.Count; i++)
+            {
+                var alive = alives[i];
+                if (alive == null || !IsKitsune(alive)) continue;
+
+                var player = world.GetClosestPlayer(alive.position, FollowMaxRange, false);
+                if (player == null) continue;
+
+                float dist = Vector3.Distance(alive.position, player.position);
+                float teleport = EvolutionRules.GetTeleportDistance(ActiveForm(alive));
+
+                if (dist > teleport)
+                {
+                    alive.SetPosition(player.position + TeleportOffset(player), true);
+                    if (alive.moveHelper != null) alive.moveHelper.Stop();
+                    alive.ClearInvestigatePosition();
+                }
+                else if (dist > FollowStartDistance)
+                {
+                    // SetInvestigatePosition every fast tick so Wander never
+                    // gets a chance to fire. NO moveHelper.SetMoveTo here —
+                    // that bypassed the animator and caused the visible slide.
+                    alive.SetInvestigatePosition(player.position, 600, false);
+                }
+                else
+                {
+                    alive.ClearInvestigatePosition();
+                }
+            }
         }
 
         private static bool IsKitsune(EntityAlive alive)
@@ -231,37 +272,12 @@ namespace KitsuneCompanion
 
         // ---------- Follow ----------
 
+        // UpdateFollow on the heavy tick is now redundant — TickFollow does it
+        // every 0.25s. Kept as a no-op call site so UpdateKitsune still has
+        // its old shape; if heavy-tick follow is ever needed again it goes
+        // here.
         private static void UpdateFollow(EntityAlive kitsune, EntityPlayer player, float distToPlayer)
         {
-            float teleport = EvolutionRules.GetTeleportDistance(ActiveForm(kitsune));
-
-            if (distToPlayer > teleport)
-            {
-                kitsune.SetPosition(player.position + TeleportOffset(player), true);
-                if (kitsune.moveHelper != null) kitsune.moveHelper.Stop();
-                return;
-            }
-
-            if (distToPlayer > FollowStartDistance)
-            {
-                // SetInvestigatePosition feeds the ApproachSpot AI task
-                // (priority 5 on our entity, above Wander at 7) so the AI
-                // loop itself drives movement toward the player. Calling
-                // moveHelper.SetMoveTo directly loses to AI overrides every
-                // frame; using the AI's own target slot wins.
-                //
-                // Duration 600 ticks (~30s) gives plenty of buffer; we
-                // re-set every 2s anyway so it never actually expires
-                // mid-pursuit.
-                kitsune.SetInvestigatePosition(player.position, 600, false);
-                if (kitsune.moveHelper != null)
-                    kitsune.moveHelper.SetMoveTo(player.position, false);
-            }
-            else if (kitsune.moveHelper != null)
-            {
-                kitsune.moveHelper.Stop();
-                kitsune.ClearInvestigatePosition();
-            }
         }
 
         // Place the kitsune behind-right of the player relative to the player's
