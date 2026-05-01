@@ -21,35 +21,32 @@
              KITSUNE COMPANION PANEL — Step 8b Phase 2a skeleton
              ============================================================
              Sidebar window for the inventory/character screen.
-             panel="Right" docks it on the right; window_group registration
-             in xui.xml ensures it opens with the character screen.
+             panel="Right" docks it on the right edge of the menu's
+             layout area — sits as a third column alongside the
+             character frame on the left and the backpack grid in the
+             center, NOT against the viewport edge. This way it scales
+             with UI scale and follows the menu container.
              Phase 2a = minimal — title bar + placeholder rows.
              Phase 2b = data binding via XUiC_KitsuneCompanionPanel.
              Phase 2c = Feed/Pet/Recall action buttons + handlers.
         -->
         <window name="windowKitsuneCompanionPanel"
-                width="327" height="704"
-                anchor="RightTop"
-                cursor_area="true">
+                width="327" height="524"
+                panel="Right"
+                cursor_area="true"
+                controller="KitsuneCompanion.XUiC_KitsuneCompanionPanel, KitsuneCompanion">
 
-            <!-- Pull the content rect into the top-right corner. Y offset
-                 -180 pushes us below the always-on challenge tracker
-                 (windowQuestTracker / "CRAFT LAND CLAIM BLOCK" etc.) so
-                 the kitsune panel header isn't covered up. Height 524
-                 keeps the panel from running into the hotbar at the bottom. -->
-            <rect pos="-336,-180" width="327" height="524">
+            <!-- Header bar -->
+            <panel name="header" height="43" depth="1" backgroundspritename="ui_game_panel_header">
+                <sprite depth="2" name="windowIcon" style="icon32px" pos="5,-5"
+                        sprite="ui_game_symbol_animal_tracker" color="111,234,255,255"/>
+                <label depth="2" name="title" pos="42,-6" width="280" height="32"
+                       text="{kitsunePanelName}" font_size="28" color="220,220,220,255"/>
+            </panel>
 
-                <!-- Header bar -->
-                <panel name="header" height="43" depth="1" backgroundspritename="ui_game_panel_header">
-                    <sprite depth="2" name="windowIcon" style="icon32px" pos="5,-5"
-                            sprite="ui_game_symbol_animal_tracker" color="111,234,255,255"/>
-                    <label depth="2" name="title" pos="42,-6" width="280" height="32"
-                           text="KITSUNE COMPANION" font_size="28" color="220,220,220,255"/>
-                </panel>
-
-                <!-- Body -->
-                <rect pos="0,-46" width="327" height="658">
-                    <sprite depth="1" name="background" color="25,25,25,240" type="sliced"/>
+            <!-- Body -->
+            <rect pos="0,-46" width="327" height="478">
+                <sprite depth="1" name="background" color="25,25,25,240" type="sliced"/>
 
                 <!-- Form row -->
                 <rect pos="9,-9" width="309" height="60">
@@ -57,7 +54,7 @@
                     <label depth="3" pos="9,-6" width="100" height="22"
                            text="FORM" font_size="18" color="200,160,80,255"/>
                     <label depth="3" pos="9,-30" width="290" height="22"
-                           text="Manifested" font_size="22" color="111,234,255,220"/>
+                           text="{kitsunePanelForm}" font_size="22" color="111,234,255,220"/>
                 </rect>
 
                 <!-- Temperament row -->
@@ -66,7 +63,7 @@
                     <label depth="3" pos="9,-6" width="200" height="22"
                            text="TEMPERAMENT" font_size="18" color="200,160,80,255"/>
                     <label depth="3" pos="9,-30" width="290" height="22"
-                           text="Curious" font_size="22" color="220,220,220,255"/>
+                           text="{kitsunePanelTemperament}" font_size="22" color="220,220,220,255"/>
                 </rect>
 
                 <!-- Bond row -->
@@ -75,7 +72,7 @@
                     <label depth="3" pos="9,-6" width="100" height="22"
                            text="BOND" font_size="18" color="200,160,80,255"/>
                     <label depth="3" pos="9,-30" width="200" height="22"
-                           text="Familiar 40%" font_size="22" color="111,234,255,220"/>
+                           text="{kitsunePanelBond}" font_size="22" color="111,234,255,220"/>
                 </rect>
 
                 <!-- Companion Actions row (placeholder buttons, wired in Phase 2c) -->
@@ -87,17 +84,16 @@
                            text="(Feed / Pet / Recall — Phase 2c)" font_size="14" color="120,120,120,220"/>
                 </rect>
 
-                    <!-- Companion Perks row -->
-                    <rect pos="9,-293" width="309" height="80">
-                        <sprite depth="2" name="border" color="0,0,0,128" type="sliced"/>
-                        <label depth="3" pos="9,-6" width="200" height="22"
-                               text="COMPANION PERKS" font_size="18" color="200,160,80,255"/>
-                        <label depth="3" pos="9,-50" width="290" height="22"
-                               text="(Resource Sense, Night Prowl, Pack Instinct)"
-                               font_size="14" color="120,120,120,220"/>
-                    </rect>
-
+                <!-- Companion Perks row -->
+                <rect pos="9,-293" width="309" height="80">
+                    <sprite depth="2" name="border" color="0,0,0,128" type="sliced"/>
+                    <label depth="3" pos="9,-6" width="200" height="22"
+                           text="COMPANION PERKS" font_size="18" color="200,160,80,255"/>
+                    <label depth="3" pos="9,-50" width="290" height="22"
+                           text="(Resource Sense, Night Prowl, Pack Instinct)"
+                           font_size="14" color="120,120,120,220"/>
                 </rect>
+
             </rect>
         </window>
 
