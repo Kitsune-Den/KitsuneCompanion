@@ -244,14 +244,23 @@ namespace KitsuneCompanion
 
             if (distToPlayer > FollowStartDistance)
             {
-                // Direct move command — proper "go here" rather than the
-                // one-shot SetInvestigatePosition we were misusing before.
+                // SetInvestigatePosition feeds the ApproachSpot AI task
+                // (priority 5 on our entity, above Wander at 7) so the AI
+                // loop itself drives movement toward the player. Calling
+                // moveHelper.SetMoveTo directly loses to AI overrides every
+                // frame; using the AI's own target slot wins.
+                //
+                // Duration 600 ticks (~30s) gives plenty of buffer; we
+                // re-set every 2s anyway so it never actually expires
+                // mid-pursuit.
+                kitsune.SetInvestigatePosition(player.position, 600, false);
                 if (kitsune.moveHelper != null)
                     kitsune.moveHelper.SetMoveTo(player.position, false);
             }
             else if (kitsune.moveHelper != null)
             {
                 kitsune.moveHelper.Stop();
+                kitsune.ClearInvestigatePosition();
             }
         }
 
