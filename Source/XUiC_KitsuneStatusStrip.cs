@@ -11,14 +11,29 @@ namespace KitsuneCompanion
     public class XUiC_KitsuneStatusStrip : XUiController
     {
         private const string EntityClassName = "kitsuneCompanion";
-        private const float SearchRadius = 60f;
+        private const float SearchRadius = 80f;
         private const float CacheLifetimeSeconds = 0.5f;
+        private const float DirtyRefreshInterval = 1f;
 
         private float _cacheUntil;
+        private float _nextDirty;
         private EntityAlive _cachedKitsune;
-        private string _cachedName;
-        private string _cachedStatus;
+        private string _cachedName = "";
+        private string _cachedStatus = "";
         private bool _cachedHasKitsune;
+        private int _diagLogCount;
+
+        public override void Update(float _dt)
+        {
+            base.Update(_dt);
+            // XUi only re-resolves bindings when children are marked dirty.
+            // Push a dirty flag every second so the widget reflects live state
+            // (temperament shifting at night, bond accruing, form bonding).
+            float now = Time.time;
+            if (now < _nextDirty) return;
+            _nextDirty = now + DirtyRefreshInterval;
+            SetAllChildrenDirty(true);
+        }
 
         public override bool GetBindingValueInternal(ref string value, string bindingName)
         {
@@ -56,6 +71,18 @@ namespace KitsuneCompanion
             _cachedHasKitsune = true;
             _cachedName = KitsuneNames.GetName(_cachedKitsune.entityId);
             _cachedStatus = BuildStatusLine(_cachedKitsune);
+
+            // Throttled diag (~5s cadence) to confirm what the controller
+            // actually computes vs what the heavy tick claims is on the entity.
+            if (_diagLogCount++ % 10 == 0)
+            {
+                var b = _cachedKitsune.Buffs;
+                bool hasSerene    = b != null && b.HasBuff(TemperamentRules.BuffSerene);
+                bool hasCurious   = b != null && b.HasBuff(TemperamentRules.BuffCurious);
+                bool hasPlayful   = b != null && b.HasBuff(TemperamentRules.BuffPlayful);
+                bool hasProtective = b != null && b.HasBuff(TemperamentRules.BuffProtective);
+                Log.Out($"[KitsuneCompanion] hud.diag: id={_cachedKitsune.entityId} name={_cachedName} status='{_cachedStatus}' Serene={hasSerene} Curious={hasCurious} Playful={hasPlayful} Protective={hasProtective}");
+            }
         }
 
         private static EntityAlive FindMyKitsune()
