@@ -24,12 +24,14 @@ kitsuneDreamingSilk,items,Item,,,Dreaming Silk
 kitsuneDreamingSilkDesc,items,Item,,,Cloth woven slowly, in quiet rooms. Required for kitsune rituals.
 kitsuneBondCharm,items,Item,,,Bond Charm
 kitsuneBondCharmDesc,items,Item,,,A token of the bond between you and your kitsune. Carry near your kitsune to deepen the bond. Consumed on use.
+buffKitsuneBondFamiliarName,buffs,Buff,,,Familiar
+buffKitsuneBondFamiliarDesc,buffs,Buff,,,The kitsune knows your scent now. It lingers a little longer.
 buffKitsuneBondTrustedName,buffs,Buff,,,Trusted
 buffKitsuneBondTrustedDesc,buffs,Buff,,,The kitsune trusts you. It carries itself a little more steadily.
-buffKitsuneBondDevotedName,buffs,Buff,,,Devoted
-buffKitsuneBondDevotedDesc,buffs,Buff,,,The kitsune is devoted. Wounds close even when at rest.
-buffKitsuneBondAwakenedName,buffs,Buff,,,Awakened
-buffKitsuneBondAwakenedDesc,buffs,Buff,,,The kitsune has fully awakened. Sturdier, swifter to mend, slower to fall.
+buffKitsuneBondBoundName,buffs,Buff,,,Bound
+buffKitsuneBondBoundDesc,buffs,Buff,,,The kitsune is bound to you. Wounds close even when at rest.
+buffKitsuneBondKindredName,buffs,Buff,,,Kindred
+buffKitsuneBondKindredDesc,buffs,Buff,,,Kindred. Sturdier, swifter to mend, slower to fall — yours, and you, theirs.
 buffKitsuneFormMistName,buffs,Buff,,,Mist Form
 buffKitsuneFormMistDesc,buffs,Buff,,,The kitsune walks half in the world and half through it. Hops to your side from far away; veils you in mist when you crouch.
 buffKitsuneStealthAuraName,buffs,Buff,,,Mist-Veiled

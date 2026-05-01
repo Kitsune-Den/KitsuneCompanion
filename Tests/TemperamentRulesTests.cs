@@ -33,23 +33,27 @@ namespace KitsuneCompanion.Tests
         }
 
         [Fact]
-        public void Day_MidHealth_DevotedOrHigher_LeansPlayful()
+        public void Day_MidHealth_TrustedOrHigher_LeansPlayful()
         {
+            // 5-tier ladder: tier 2 = Trusted, tier 3 = Bound, tier 4 = Kindred.
             Assert.Equal(TemperamentRules.BuffPlayful, TemperamentRules.Choose(0.6f, false, 2));
             Assert.Equal(TemperamentRules.BuffPlayful, TemperamentRules.Choose(0.5f, false, 3));
+            Assert.Equal(TemperamentRules.BuffPlayful, TemperamentRules.Choose(0.7f, false, 4));
         }
 
         [Fact]
-        public void Day_MidHealth_TrustedStillCurious()
+        public void Day_MidHealth_FamiliarStillCurious()
         {
+            // Tier 1 = Familiar (just below the Playful flip threshold).
             Assert.Equal(TemperamentRules.BuffCurious, TemperamentRules.Choose(0.6f, false, 1));
         }
 
         [Fact]
         public void BondTier_DoesNotOverrideLowHealthOrNight()
         {
-            Assert.Equal(TemperamentRules.BuffProtective, TemperamentRules.Choose(0.3f, false, 3));
-            Assert.Equal(TemperamentRules.BuffSerene,    TemperamentRules.Choose(0.9f, true,  3));
+            // Even at top tier (Kindred = 4), Protective and Serene priority wins.
+            Assert.Equal(TemperamentRules.BuffProtective, TemperamentRules.Choose(0.3f, false, 4));
+            Assert.Equal(TemperamentRules.BuffSerene,    TemperamentRules.Choose(0.9f, true,  4));
         }
 
         [Fact]

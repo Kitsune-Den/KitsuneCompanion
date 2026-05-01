@@ -9,22 +9,28 @@ namespace KitsuneCompanion
         public const float BondPerCharm = 25f;
         public const float BondPerTick = 1f / 30f;
 
-        public const float ThresholdTrusted  = 10f;
-        public const float ThresholdDevoted  = 50f;
-        public const float ThresholdAwakened = 200f;
+        // 5-tier ladder: Faint (0) → Familiar → Trusted → Bound → Kindred.
+        // "Trusted" persists as a name from the prior 4-tier ladder but
+        // now lives at tier 2 (was tier 1).
+        public const float ThresholdFamiliar = 5f;
+        public const float ThresholdTrusted  = 25f;
+        public const float ThresholdBound    = 100f;
+        public const float ThresholdKindred  = 300f;
 
+        public const string BuffFamiliar = "buffKitsuneBondFamiliar";
         public const string BuffTrusted  = "buffKitsuneBondTrusted";
-        public const string BuffDevoted  = "buffKitsuneBondDevoted";
-        public const string BuffAwakened = "buffKitsuneBondAwakened";
+        public const string BuffBound    = "buffKitsuneBondBound";
+        public const string BuffKindred  = "buffKitsuneBondKindred";
 
         public static readonly string[] AllBondBuffs =
-            { BuffTrusted, BuffDevoted, BuffAwakened };
+            { BuffFamiliar, BuffTrusted, BuffBound, BuffKindred };
 
         public static int Tier(float bondPoints)
         {
-            if (bondPoints >= ThresholdAwakened) return 3;
-            if (bondPoints >= ThresholdDevoted)  return 2;
-            if (bondPoints >= ThresholdTrusted)  return 1;
+            if (bondPoints >= ThresholdKindred)  return 4;
+            if (bondPoints >= ThresholdBound)    return 3;
+            if (bondPoints >= ThresholdTrusted)  return 2;
+            if (bondPoints >= ThresholdFamiliar) return 1;
             return 0;
         }
 
@@ -32,16 +38,17 @@ namespace KitsuneCompanion
         {
             switch (tier)
             {
-                case 1: return BuffTrusted;
-                case 2: return BuffDevoted;
-                case 3: return BuffAwakened;
+                case 1: return BuffFamiliar;
+                case 2: return BuffTrusted;
+                case 3: return BuffBound;
+                case 4: return BuffKindred;
                 default: return null;
             }
         }
 
         // Fractional position within the current tier in [0, 1].
         // 0.0 means just entered this tier; 1.0 means at the next-tier
-        // threshold. Max tier (Awakened) always returns 1.0.
+        // threshold. Max tier (Kindred) always returns 1.0.
         public static float TierProgress(float bondPoints)
         {
             if (bondPoints <= 0f) return 0f;
@@ -49,9 +56,10 @@ namespace KitsuneCompanion
             float lower, upper;
             switch (Tier(bondPoints))
             {
-                case 0: lower = 0f;                upper = ThresholdTrusted;  break;
-                case 1: lower = ThresholdTrusted;  upper = ThresholdDevoted;  break;
-                case 2: lower = ThresholdDevoted;  upper = ThresholdAwakened; break;
+                case 0: lower = 0f;                 upper = ThresholdFamiliar; break;
+                case 1: lower = ThresholdFamiliar;  upper = ThresholdTrusted;  break;
+                case 2: lower = ThresholdTrusted;   upper = ThresholdBound;    break;
+                case 3: lower = ThresholdBound;     upper = ThresholdKindred;  break;
                 default: return 1f;
             }
 

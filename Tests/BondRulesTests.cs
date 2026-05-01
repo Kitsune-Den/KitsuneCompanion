@@ -6,14 +6,17 @@ namespace KitsuneCompanion.Tests
     public class BondRulesTests
     {
         [Theory]
-        [InlineData(0f,    0)]
-        [InlineData(9.99f, 0)]
-        [InlineData(10f,   1)]
-        [InlineData(49.99f, 1)]
-        [InlineData(50f,   2)]
-        [InlineData(199.99f, 2)]
-        [InlineData(200f,  3)]
-        [InlineData(9999f, 3)]
+        // 5-tier ladder: Faint(0)→Familiar(5)→Trusted(25)→Bound(100)→Kindred(300)
+        [InlineData(0f,      0)]   // Faint
+        [InlineData(4.99f,   0)]
+        [InlineData(5f,      1)]   // Familiar
+        [InlineData(24.99f,  1)]
+        [InlineData(25f,     2)]   // Trusted
+        [InlineData(99.99f,  2)]
+        [InlineData(100f,    3)]   // Bound
+        [InlineData(299.99f, 3)]
+        [InlineData(300f,    4)]   // Kindred
+        [InlineData(9999f,   4)]
         public void Tier_BoundariesAreInclusiveOnLowerEdge(float points, int expected)
         {
             Assert.Equal(expected, BondRules.Tier(points));
@@ -23,37 +26,42 @@ namespace KitsuneCompanion.Tests
         public void BuffForTier_MapsCorrectly()
         {
             Assert.Null(BondRules.BuffForTier(0));
-            Assert.Equal(BondRules.BuffTrusted,  BondRules.BuffForTier(1));
-            Assert.Equal(BondRules.BuffDevoted,  BondRules.BuffForTier(2));
-            Assert.Equal(BondRules.BuffAwakened, BondRules.BuffForTier(3));
+            Assert.Equal(BondRules.BuffFamiliar, BondRules.BuffForTier(1));
+            Assert.Equal(BondRules.BuffTrusted,  BondRules.BuffForTier(2));
+            Assert.Equal(BondRules.BuffBound,    BondRules.BuffForTier(3));
+            Assert.Equal(BondRules.BuffKindred,  BondRules.BuffForTier(4));
         }
 
         [Fact]
-        public void AllBondBuffs_ContainsThreeTiers()
+        public void AllBondBuffs_ContainsFourTiers()
         {
-            Assert.Equal(3, BondRules.AllBondBuffs.Length);
+            Assert.Equal(4, BondRules.AllBondBuffs.Length);
+            Assert.Contains(BondRules.BuffFamiliar, BondRules.AllBondBuffs);
             Assert.Contains(BondRules.BuffTrusted,  BondRules.AllBondBuffs);
-            Assert.Contains(BondRules.BuffDevoted,  BondRules.AllBondBuffs);
-            Assert.Contains(BondRules.BuffAwakened, BondRules.AllBondBuffs);
+            Assert.Contains(BondRules.BuffBound,    BondRules.AllBondBuffs);
+            Assert.Contains(BondRules.BuffKindred,  BondRules.AllBondBuffs);
         }
 
         [Fact]
         public void OneCharm_LiftsZeroToTrusted()
         {
+            // 1 charm = 25 points = Trusted threshold (skips Familiar at 5).
             Assert.Equal(0, BondRules.Tier(0f));
-            Assert.Equal(1, BondRules.Tier(0f + BondRules.BondPerCharm));
+            Assert.Equal(2, BondRules.Tier(0f + BondRules.BondPerCharm));
         }
 
         [Theory]
-        [InlineData(-5f,    0f)]   // negative clamped to 0
-        [InlineData(0f,     0f)]   // tier 0 floor
-        [InlineData(5f,     0.5f)] // tier 0 midpoint
-        [InlineData(10f,    0f)]   // tier 1 floor (just entered Trusted)
-        [InlineData(30f,    0.5f)] // tier 1 midpoint
-        [InlineData(50f,    0f)]   // tier 2 floor (just entered Devoted)
-        [InlineData(125f,   0.5f)] // tier 2 midpoint
-        [InlineData(200f,   1f)]   // tier 3 (Awakened) — max tier returns 1
-        [InlineData(9999f,  1f)]   // max tier holds at 1
+        [InlineData(-5f,   0f)]   // negative clamped to 0
+        [InlineData(0f,    0f)]   // tier 0 floor
+        [InlineData(2.5f,  0.5f)] // tier 0 midpoint (between 0 and 5)
+        [InlineData(5f,    0f)]   // tier 1 floor (Familiar)
+        [InlineData(15f,   0.5f)] // tier 1 midpoint (between 5 and 25)
+        [InlineData(25f,   0f)]   // tier 2 floor (Trusted)
+        [InlineData(62.5f, 0.5f)] // tier 2 midpoint (between 25 and 100)
+        [InlineData(100f,  0f)]   // tier 3 floor (Bound)
+        [InlineData(200f,  0.5f)] // tier 3 midpoint (between 100 and 300)
+        [InlineData(300f,  1f)]   // tier 4 (Kindred) — max tier returns 1
+        [InlineData(9999f, 1f)]   // max tier holds at 1
         public void TierProgress_FractionalPositionWithinTier(float points, float expected)
         {
             Assert.Equal(expected, BondRules.TierProgress(points), precision: 4);

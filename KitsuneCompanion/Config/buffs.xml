@@ -141,10 +141,23 @@
 
         <!-- ============================================================
              BOND TIERS
-             Mutually exclusive marker buffs reflecting kitsune's bond
-             with player. Each carries the CUMULATIVE bonus for its tier;
-             upgrading replaces (not stacks).
+             5-tier ladder: Faint (no buff) → Familiar → Trusted → Bound → Kindred.
+             Mutually exclusive marker buffs. Each carries the CUMULATIVE
+             bonus for its tier; upgrading replaces (not stacks).
              ============================================================ -->
+        <buff name="buffKitsuneBondFamiliar"
+              name_key="buffKitsuneBondFamiliarName"
+              description_key="buffKitsuneBondFamiliarDesc"
+              icon="ui_game_symbol_allies"
+              icon_color="200,200,220">
+            <stack_type value="replace"/>
+            <duration value="0"/>
+
+            <effect_group>
+                <passive_effect name="HealthMax" operation="perc_add" value="0.05"/>
+            </effect_group>
+        </buff>
+
         <buff name="buffKitsuneBondTrusted"
               name_key="buffKitsuneBondTrustedName"
               description_key="buffKitsuneBondTrustedDesc"
@@ -158,9 +171,9 @@
             </effect_group>
         </buff>
 
-        <buff name="buffKitsuneBondDevoted"
-              name_key="buffKitsuneBondDevotedName"
-              description_key="buffKitsuneBondDevotedDesc"
+        <buff name="buffKitsuneBondBound"
+              name_key="buffKitsuneBondBoundName"
+              description_key="buffKitsuneBondBoundDesc"
               icon="ui_game_symbol_allies"
               icon_color="255,220,160">
             <stack_type value="replace"/>
@@ -172,9 +185,9 @@
             </effect_group>
         </buff>
 
-        <buff name="buffKitsuneBondAwakened"
-              name_key="buffKitsuneBondAwakenedName"
-              description_key="buffKitsuneBondAwakenedDesc"
+        <buff name="buffKitsuneBondKindred"
+              name_key="buffKitsuneBondKindredName"
+              description_key="buffKitsuneBondKindredDesc"
               icon="ui_game_symbol_allies"
               icon_color="255,200,120">
             <stack_type value="replace"/>
