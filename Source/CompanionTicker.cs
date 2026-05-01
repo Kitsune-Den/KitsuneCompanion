@@ -18,38 +18,28 @@ namespace KitsuneCompanion
             var alives = world.EntityAlives;
             if (alives == null) return;
 
-            bool diagThisTick = (_diagTickCount % 5 == 0);
-            var classDump = diagThisTick ? new System.Text.StringBuilder() : null;
             int kitsuneSeen = 0;
-
             for (int i = 0; i < alives.Count; i++)
             {
                 var alive = alives[i];
-                if (alive == null) continue;
-
-                if (diagThisTick)
-                {
-                    string cn = alive.entityClass > 0
-                        ? EntityClass.GetEntityClassName(alive.entityClass)
-                        : "(noclass)";
-                    classDump.Append($" [{i}:'{cn}' id={alive.entityId}]");
-                }
-
-                if (IsKitsune(alive))
+                if (alive != null && IsKitsune(alive))
                 {
                     kitsuneSeen++;
                     UpdateKitsune(alive, world);
                 }
             }
 
-            if (diagThisTick)
-                Log.Out($"[KitsuneCompanion] diag.tick: alives={alives.Count} kitsuneSeen={kitsuneSeen} entries={classDump}");
-            _diagTickCount++;
+            // Slim diag — verifies tick alive and kitsune count. Remove
+            // entirely once follow + temperament confirmed end-to-end.
+            if (_diagTickCount++ % 15 == 0)
+                Log.Out($"[KitsuneCompanion] tick: alives={alives.Count} kitsuneSeen={kitsuneSeen}");
         }
 
         private static bool IsKitsune(EntityAlive alive)
         {
-            if (alive.entityClass <= 0) return false;
+            // entityClass is a 32-bit hash, can legitimately be negative.
+            // Only zero indicates an unset/invalid class.
+            if (alive.entityClass == 0) return false;
             return EntityClass.GetEntityClassName(alive.entityClass) == EntityClassName;
         }
 
