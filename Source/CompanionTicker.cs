@@ -74,7 +74,9 @@ namespace KitsuneCompanion
         {
             var buffs = kitsune.Buffs;
             if (buffs == null) return;
-            buffs.IncrementCustomVar(BondRules.CvarBondPoints, delta);
+            float clamped = BondRules.ClampDelta(GetBondPoints(kitsune), delta);
+            if (clamped == 0f) return;
+            buffs.IncrementCustomVar(BondRules.CvarBondPoints, clamped);
         }
 
         private static void AccrueBond(EntityAlive kitsune, float distToPlayer)

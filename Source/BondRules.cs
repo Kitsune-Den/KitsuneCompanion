@@ -9,6 +9,11 @@ namespace KitsuneCompanion
         public const float BondPerCharm = 25f;
         public const float BondPerTick = 1f / 30f;
 
+        // Hard ceiling on bond points. Plenty of headroom past Kindred (300)
+        // for dedicated bonders, but bounded so the cvar doesn't grow without
+        // limit over a long playthrough.
+        public const float MaxBondPoints = 1000f;
+
         // 5-tier ladder: Faint (0) → Familiar → Trusted → Bound → Kindred.
         // "Trusted" persists as a name from the prior 4-tier ladder but
         // now lives at tier 2 (was tier 1).
@@ -44,6 +49,18 @@ namespace KitsuneCompanion
                 case 4: return BuffKindred;
                 default: return null;
             }
+        }
+
+        // Clamp a positive bond-point increment so the running total never
+        // exceeds MaxBondPoints. Negative deltas (decay, future use) pass
+        // through unchanged.
+        public static float ClampDelta(float currentBond, float requestedDelta)
+        {
+            if (requestedDelta <= 0f) return requestedDelta;
+            if (currentBond >= MaxBondPoints) return 0f;
+            float newValue = currentBond + requestedDelta;
+            if (newValue > MaxBondPoints) return MaxBondPoints - currentBond;
+            return requestedDelta;
         }
 
         // Fractional position within the current tier in [0, 1].

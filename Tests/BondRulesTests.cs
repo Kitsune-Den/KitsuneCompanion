@@ -66,5 +66,34 @@ namespace KitsuneCompanion.Tests
         {
             Assert.Equal(expected, BondRules.TierProgress(points), precision: 4);
         }
+
+        [Fact]
+        public void ClampDelta_BelowCap_PassesDeltaThrough()
+        {
+            Assert.Equal(25f, BondRules.ClampDelta(currentBond: 0f, requestedDelta: 25f));
+            Assert.Equal(50f, BondRules.ClampDelta(currentBond: 500f, requestedDelta: 50f));
+        }
+
+        [Fact]
+        public void ClampDelta_AtCap_ReturnsZero()
+        {
+            Assert.Equal(0f, BondRules.ClampDelta(currentBond: BondRules.MaxBondPoints, requestedDelta: 25f));
+            Assert.Equal(0f, BondRules.ClampDelta(currentBond: BondRules.MaxBondPoints + 100f, requestedDelta: 25f));
+        }
+
+        [Fact]
+        public void ClampDelta_CrossingCap_ReturnsRemainingHeadroom()
+        {
+            // 990 + 25 would be 1015; cap is 1000; expect 10.
+            Assert.Equal(10f, BondRules.ClampDelta(currentBond: 990f, requestedDelta: 25f));
+        }
+
+        [Fact]
+        public void ClampDelta_NegativeDelta_PassesThroughUnchanged()
+        {
+            // Decay (future use) shouldn't be clamped by the upper bound.
+            Assert.Equal(-5f, BondRules.ClampDelta(currentBond: 100f, requestedDelta: -5f));
+            Assert.Equal(-50f, BondRules.ClampDelta(currentBond: BondRules.MaxBondPoints, requestedDelta: -50f));
+        }
     }
 }
