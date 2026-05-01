@@ -10,8 +10,15 @@
         <window name="HUDKitsuneStatusStrip" />
     </append>
 
-    <!-- Add the kitsune companion panel to the character window_group so
-         it opens alongside the inventory grid + character frame. -->
+    <!-- Register kitsune companion panel on the crafting window_group.
+         Crafting is the default tab Tab opens, AND its right column is
+         empty (character tab has Status Effects there which overlaps).
+         Also register on character group so it's available on both tabs;
+         on character tab it'll overlap Status Effects until we tune the
+         positioning. -->
+    <append xpath="/xui/ruleset[@name='default']/window_group[@name='crafting']">
+        <window name="windowKitsuneCompanionPanel" />
+    </append>
     <append xpath="/xui/ruleset[@name='default']/window_group[@name='character']">
         <window name="windowKitsuneCompanionPanel" />
     </append>
