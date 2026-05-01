@@ -32,11 +32,12 @@
                 anchor="RightTop"
                 cursor_area="true">
 
-            <!-- Pull the whole content rect into the top-right corner so it
-                 stacks at the same height as the LEFT-anchored CharacterFrame.
-                 panel="Right" was auto-docking us BELOW the inventory grid
-                 instead of beside it. -->
-            <rect pos="-336,-46" width="327" height="704">
+            <!-- Pull the content rect into the top-right corner. Y offset
+                 -180 pushes us below the always-on challenge tracker
+                 (windowQuestTracker / "CRAFT LAND CLAIM BLOCK" etc.) so
+                 the kitsune panel header isn't covered up. Height 524
+                 keeps the panel from running into the hotbar at the bottom. -->
+            <rect pos="-336,-180" width="327" height="524">
 
                 <!-- Header bar -->
                 <panel name="header" height="43" depth="1" backgroundspritename="ui_game_panel_header">
