@@ -12,77 +12,68 @@ namespace KitsuneCompanion
     {
         private const string EntityClassName = "kitsuneCompanion";
         private const float SearchRadius = 80f;
-        private const float CacheLifetimeSeconds = 0.5f;
-        private const float DirtyRefreshInterval = 1f;
+        private const float DirtyRefreshInterval = 0.5f;
 
-        private float _cacheUntil;
         private float _nextDirty;
-        private EntityAlive _cachedKitsune;
-        private string _cachedName = "";
-        private string _cachedStatus = "";
-        private bool _cachedHasKitsune;
+        private int _updateCount;
         private int _diagLogCount;
+
+        public override void Init()
+        {
+            base.Init();
+            Log.Out("[KitsuneCompanion] hud.init: controller instantiated");
+        }
 
         public override void Update(float _dt)
         {
             base.Update(_dt);
-            // XUi only re-resolves bindings when children are marked dirty.
-            // Push a dirty flag every second so the widget reflects live state
-            // (temperament shifting at night, bond accruing, form bonding).
+            _updateCount++;
+
             float now = Time.time;
             if (now < _nextDirty) return;
             _nextDirty = now + DirtyRefreshInterval;
-            SetAllChildrenDirty(true);
+
+            // Try a few different ways to push a refresh; one will hit.
+            try { RefreshBindingsSelfAndChildren(); } catch { }
+            try { SetAllChildrenDirty(true); } catch { }
+
+            // Log Update activity every ~3s to confirm it fires at all.
+            if (_updateCount % 180 == 1)
+                Log.Out($"[KitsuneCompanion] hud.update: count={_updateCount} fired");
         }
 
         public override bool GetBindingValueInternal(ref string value, string bindingName)
         {
-            EnsureFresh();
+            // No cache — compute every call. Any cache adds a window where
+            // bindings show stale data; the resolution is cheap.
+            var kitsune = FindMyKitsune();
+            bool has = kitsune != null;
+            string name = "";
+            string status = "";
+            if (has)
+            {
+                name = KitsuneNames.GetName(kitsune.entityId);
+                status = BuildStatusLine(kitsune);
+            }
+
+            // Per-resolution diag (throttled ~once per 10 resolutions).
+            if (_diagLogCount++ % 30 == 0 && has)
+            {
+                var b = kitsune.Buffs;
+                bool s = b != null && b.HasBuff(TemperamentRules.BuffSerene);
+                bool c = b != null && b.HasBuff(TemperamentRules.BuffCurious);
+                bool pl = b != null && b.HasBuff(TemperamentRules.BuffPlayful);
+                bool pr = b != null && b.HasBuff(TemperamentRules.BuffProtective);
+                Log.Out($"[KitsuneCompanion] hud.diag: bind={bindingName} id={kitsune.entityId} status='{status}' S={s} C={c} P={pl} Pr={pr}");
+            }
+
             switch (bindingName)
             {
-                case "kitsuneName":
-                    value = _cachedName;
-                    return true;
-                case "kitsuneStatus":
-                    value = _cachedStatus;
-                    return true;
-                case "kitsuneVisible":
-                    value = _cachedHasKitsune ? "true" : "false";
-                    return true;
+                case "kitsuneName":   value = name;                  return true;
+                case "kitsuneStatus": value = status;                return true;
+                case "kitsuneVisible": value = has ? "true" : "false"; return true;
             }
             return base.GetBindingValueInternal(ref value, bindingName);
-        }
-
-        private void EnsureFresh()
-        {
-            float now = Time.time;
-            if (now < _cacheUntil) return;
-            _cacheUntil = now + CacheLifetimeSeconds;
-
-            _cachedKitsune = FindMyKitsune();
-            if (_cachedKitsune == null)
-            {
-                _cachedHasKitsune = false;
-                _cachedName = "";
-                _cachedStatus = "";
-                return;
-            }
-
-            _cachedHasKitsune = true;
-            _cachedName = KitsuneNames.GetName(_cachedKitsune.entityId);
-            _cachedStatus = BuildStatusLine(_cachedKitsune);
-
-            // Throttled diag (~5s cadence) to confirm what the controller
-            // actually computes vs what the heavy tick claims is on the entity.
-            if (_diagLogCount++ % 10 == 0)
-            {
-                var b = _cachedKitsune.Buffs;
-                bool hasSerene    = b != null && b.HasBuff(TemperamentRules.BuffSerene);
-                bool hasCurious   = b != null && b.HasBuff(TemperamentRules.BuffCurious);
-                bool hasPlayful   = b != null && b.HasBuff(TemperamentRules.BuffPlayful);
-                bool hasProtective = b != null && b.HasBuff(TemperamentRules.BuffProtective);
-                Log.Out($"[KitsuneCompanion] hud.diag: id={_cachedKitsune.entityId} name={_cachedName} status='{_cachedStatus}' Serene={hasSerene} Curious={hasCurious} Playful={hasPlayful} Protective={hasProtective}");
-            }
         }
 
         private static EntityAlive FindMyKitsune()
