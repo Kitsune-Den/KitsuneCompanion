@@ -224,7 +224,7 @@ namespace KitsuneCompanion
 
             if (distToPlayer > teleport)
             {
-                kitsune.SetPosition(player.position + new Vector3(1.5f, 0f, 0f), true);
+                kitsune.SetPosition(player.position + TeleportOffset(player), true);
                 return;
             }
 
@@ -232,6 +232,23 @@ namespace KitsuneCompanion
             {
                 kitsune.SetInvestigatePosition(player.position, 30, false);
             }
+        }
+
+        // Place the kitsune behind-right of the player relative to the player's
+        // facing direction rather than always at world-space +X. Greatly reduces
+        // odds of teleporting into a wall when the player is pressed against
+        // geometry on the +X side.
+        private static Vector3 TeleportOffset(EntityPlayer player)
+        {
+            var t = player.transform;
+            if (t == null) return new Vector3(1.5f, 0f, 0f);
+
+            Vector3 fwd = t.forward; fwd.y = 0f;
+            if (fwd.sqrMagnitude < 0.0001f) return new Vector3(1.5f, 0f, 0f);
+            fwd.Normalize();
+            Vector3 right = t.right; right.y = 0f; right.Normalize();
+
+            return -fwd * 1.0f + right * 1.5f;
         }
     }
 }

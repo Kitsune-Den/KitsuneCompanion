@@ -65,8 +65,9 @@
             <property name="Group" value="Resources"/>
         </item>
 
-        <!-- Placeholder ritual product. No effect yet — Step 5 (evolution paths)
-             and Step 6 (bond system) will give this item real triggered effects. -->
+        <!-- Bond Charm. Consumed by the temperament manager when a player
+             carrying it stands within 8 blocks of a kitsune; grants +25 bond
+             points to that kitsune. See CompanionTicker.TryConsumeBondCharm. -->
         <item name="kitsuneBondCharm">
             <property name="HoldType" value="45"/>
             <property name="Tags" value="junk,kitsuneRitualItem,kitsuneBondCharm"/>
