@@ -9,6 +9,23 @@ namespace KitsuneCompanion
         public const float BondPerCharm = 25f;
         public const float BondPerTick = 1f / 30f;
 
+        // Level scaling for proximity bond accrual: a low-level survivor
+        // feels less proven to the kitsune; a high-level one feels familiar.
+        // Curve: 0.25 floor at level 0, 1.0x at ~level 45, 3.0x cap at ~165.
+        // Charm consumption is NOT scaled — that's a deliberate offering.
+        public const float LevelMultiplierFloor = 0.25f;
+        public const float LevelMultiplierCap   = 3.0f;
+        public const float LevelMultiplierStep  = 1f / 60f; // +1.0x per 60 levels
+
+        public static float LevelMultiplier(int playerLevel)
+        {
+            if (playerLevel < 0) playerLevel = 0;
+            float raw = LevelMultiplierFloor + playerLevel * LevelMultiplierStep;
+            if (raw < LevelMultiplierFloor) return LevelMultiplierFloor;
+            if (raw > LevelMultiplierCap)   return LevelMultiplierCap;
+            return raw;
+        }
+
         // Hard ceiling on bond points. Plenty of headroom past Kindred (300)
         // for dedicated bonders, but bounded so the cvar doesn't grow without
         // limit over a long playthrough.

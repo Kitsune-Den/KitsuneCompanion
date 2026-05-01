@@ -153,7 +153,7 @@ namespace KitsuneCompanion
 
             TryConsumeFormTalisman(kitsune, player, distToPlayer);
             TryConsumeBondCharm(kitsune, player, distToPlayer);
-            AccrueBond(kitsune, distToPlayer);
+            AccrueBond(kitsune, player, distToPlayer);
             ApplyBondTier(kitsune);
 
             int max = player.GetMaxHealth();
@@ -184,10 +184,17 @@ namespace KitsuneCompanion
             buffs.IncrementCustomVar(BondRules.CvarBondPoints, clamped);
         }
 
-        private static void AccrueBond(EntityAlive kitsune, float distToPlayer)
+        private static void AccrueBond(EntityAlive kitsune, EntityPlayer player, float distToPlayer)
         {
             if (distToPlayer > BondAccrualRange) return;
-            AddBondPoints(kitsune, BondRules.BondPerTick);
+
+            // Scale with player level: a low-level survivor isn't yet "proven"
+            // enough for the kitsune to bond quickly. Charm-based bond is NOT
+            // scaled — that's an explicit offering, level-independent.
+            int level = (player != null && player.Progression != null)
+                ? player.Progression.Level : 0;
+            float scaled = BondRules.BondPerTick * BondRules.LevelMultiplier(level);
+            AddBondPoints(kitsune, scaled);
         }
 
         private static void TryConsumeBondCharm(EntityAlive kitsune, EntityPlayer player, float distToPlayer)
