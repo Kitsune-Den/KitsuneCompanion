@@ -11,19 +11,28 @@ namespace KitsuneCompanion
         private const float TalismanRange = 8f;
         private const float BondAccrualRange = 12f;
 
+        private static int _diagTickCount;
+
         public static void Tick(World world)
         {
             var alives = world.EntityAlives;
             if (alives == null) return;
 
+            int kitsuneSeen = 0;
             for (int i = 0; i < alives.Count; i++)
             {
                 var alive = alives[i];
                 if (alive != null && IsKitsune(alive))
                 {
+                    kitsuneSeen++;
                     UpdateKitsune(alive, world);
                 }
             }
+
+            // One log per 5 ticks (~every 10s) so we can verify the tick loop
+            // is alive and seeing kitsune. Remove once follow is confirmed.
+            if (_diagTickCount++ % 5 == 0)
+                Log.Out($"[KitsuneCompanion] diag.tick: alives={alives.Count} kitsuneSeen={kitsuneSeen}");
         }
 
         private static bool IsKitsune(EntityAlive alive)
@@ -235,14 +244,13 @@ namespace KitsuneCompanion
             {
                 // Direct move command — proper "go here" rather than the
                 // one-shot SetInvestigatePosition we were misusing before.
-                if (kitsune.moveHelper != null)
-                    kitsune.moveHelper.SetMoveTo(player.position, false);
+                var mh = kitsune.moveHelper;
+                Log.Out($"[KitsuneCompanion] diag.follow: kitsune={kitsune.entityId} dist={distToPlayer:F1} moveHelper={(mh != null ? "ok" : "null")}");
+                if (mh != null)
+                    mh.SetMoveTo(player.position, false);
             }
             else if (kitsune.moveHelper != null)
             {
-                // Within follow distance — stop trying to close the gap, let
-                // Wander/idle take over. Otherwise we'd jitter against the
-                // player's position every tick.
                 kitsune.moveHelper.Stop();
             }
         }
