@@ -30,19 +30,20 @@
             <property name="ExperienceGain" value="0" />
             <property name="LootListOnDeath" value="" />
 
-            <property name="AITask-1" value="BreakBlock" />
-            <property name="AITask-2" value="" />
-            <property name="AITask-3" value="" />
+            <!-- Task slots inherit from animalCoyote / animalWolf except the
+                 AttackTarget filter which we override to remove EntityPlayer.
+                 We deliberately do NOT set AITask-2 / AITask-3 to empty —
+                 the V2.6 AI parser treats an empty value as "stop iterating
+                 tasks" rather than "skip slot," which silently breaks
+                 ApproachSpot (slot 5) and we lose follow entirely.
+                 Companion side-effects of inherited Territorial /
+                 RunawayWhenHurt are minor and can be tuned later. -->
             <property name="AITask-4" value="ApproachAndAttackTarget" data="class=EntityZombie,20,EntityBandit,15" />
-            <property name="AITask-5" value="ApproachSpot" />
-            <property name="AITask-6" value="Look" />
-            <property name="AITask-7" value="Wander" />
-            <property name="AITask-8" value="" />
 
-            <property name="AITarget-1" value="SetAsTargetIfHurt" />
-            <property name="AITarget-2" value="BlockingTargetTask" />
+            <!-- Same caveat: inherit AITarget slots from coyote/wolf except
+                 the SetNearestEntityAsTarget filter (remove EntityPlayer
+                 from attack-target list). Don't blank slot 4. -->
             <property name="AITarget-3" value="SetNearestEntityAsTarget" data="class=EntityZombie,0,-8,EntityBandit,0,-8" />
-            <property name="AITarget-4" value="" />
 
             <effect_group name="Base Effects">
                 <passive_effect name="HealthMax" operation="base_set" value="120" />
