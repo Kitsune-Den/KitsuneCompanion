@@ -246,10 +246,8 @@ namespace KitsuneCompanion
             {
                 // Direct move command — proper "go here" rather than the
                 // one-shot SetInvestigatePosition we were misusing before.
-                var mh = kitsune.moveHelper;
-                Log.Out($"[KitsuneCompanion] diag.follow: kitsune={kitsune.entityId} dist={distToPlayer:F1} moveHelper={(mh != null ? "ok" : "null")}");
-                if (mh != null)
-                    mh.SetMoveTo(player.position, false);
+                if (kitsune.moveHelper != null)
+                    kitsune.moveHelper.SetMoveTo(player.position, false);
             }
             else if (kitsune.moveHelper != null)
             {
