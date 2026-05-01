@@ -227,12 +227,23 @@ namespace KitsuneCompanion
             if (distToPlayer > teleport)
             {
                 kitsune.SetPosition(player.position + TeleportOffset(player), true);
+                if (kitsune.moveHelper != null) kitsune.moveHelper.Stop();
                 return;
             }
 
             if (distToPlayer > FollowStartDistance)
             {
-                kitsune.SetInvestigatePosition(player.position, 30, false);
+                // Direct move command — proper "go here" rather than the
+                // one-shot SetInvestigatePosition we were misusing before.
+                if (kitsune.moveHelper != null)
+                    kitsune.moveHelper.SetMoveTo(player.position, false);
+            }
+            else if (kitsune.moveHelper != null)
+            {
+                // Within follow distance — stop trying to close the gap, let
+                // Wander/idle take over. Otherwise we'd jitter against the
+                // player's position every tick.
+                kitsune.moveHelper.Stop();
             }
         }
 
