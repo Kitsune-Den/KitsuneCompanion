@@ -64,18 +64,21 @@ namespace KitsuneCompanion
                 }
                 else if (dist > FollowStartDistance)
                 {
-                    // Direct navigator path. SetInvestigatePosition was
-                    // sliding (position warped without animator engaging
-                    // the walk blend tree). ASPPathNavigate.CreatePathToEntity
-                    // is what the engine uses internally for animated pursuit
-                    // — wolves chasing players use this layer.
-                    var asp = alive.navigator as GamePath.ASPPathNavigate;
-                    if (asp != null)
-                        asp.CreatePathToEntity(alive, player);
+                    // Use the AI target system. ApproachAndAttackTarget
+                    // (priority 4) is the AI task that animates wolves
+                    // properly when they chase players. By manually
+                    // setting attackTarget = player, that task engages
+                    // and walks naturally. Side effect: the kitsune will
+                    // attack the player on contact — handled separately
+                    // via 0-damage hand item once walk is confirmed.
+                    alive.SetAttackTarget(player, 30);
                 }
                 else
                 {
-                    alive.ClearInvestigatePosition();
+                    // Within follow distance — clear target so the kitsune
+                    // doesn't keep snapping at heels.
+                    if (alive.GetAttackTarget() == player)
+                        alive.SetAttackTarget(null, 0);
                 }
             }
         }
