@@ -15,63 +15,41 @@ namespace KitsuneCompanion
         private const float DirtyRefreshInterval = 0.5f;
 
         private float _nextDirty;
-        private int _updateCount;
-        private int _diagLogCount;
-
-        public override void Init()
-        {
-            base.Init();
-            Log.Out("[KitsuneCompanion] hud.init: controller instantiated");
-        }
 
         public override void Update(float _dt)
         {
             base.Update(_dt);
-            _updateCount++;
 
             float now = Time.time;
             if (now < _nextDirty) return;
             _nextDirty = now + DirtyRefreshInterval;
 
-            // Try a few different ways to push a refresh; one will hit.
+            // V2.6 XUi only re-resolves {bindings} when children are dirtied.
+            // Without these calls the widget shows stale state. Both methods
+            // tried because the refresh entrypoint isn't well-documented.
             try { RefreshBindingsSelfAndChildren(); } catch { }
             try { SetAllChildrenDirty(true); } catch { }
-
-            // Log Update activity every ~3s to confirm it fires at all.
-            if (_updateCount % 180 == 1)
-                Log.Out($"[KitsuneCompanion] hud.update: count={_updateCount} fired");
         }
 
         public override bool GetBindingValueInternal(ref string value, string bindingName)
         {
-            // No cache — compute every call. Any cache adds a window where
-            // bindings show stale data; the resolution is cheap.
+            // No cache — compute fresh per call. The entity scan is cheap
+            // and any cache window introduces visibly stale state on the
+            // widget at the cadence Update() refreshes.
             var kitsune = FindMyKitsune();
             bool has = kitsune != null;
-            string name = "";
-            string status = "";
-            if (has)
-            {
-                name = KitsuneNames.GetName(kitsune.entityId);
-                status = BuildStatusLine(kitsune);
-            }
-
-            // Per-resolution diag (throttled ~once per 10 resolutions).
-            if (_diagLogCount++ % 30 == 0 && has)
-            {
-                var b = kitsune.Buffs;
-                bool s = b != null && b.HasBuff(TemperamentRules.BuffSerene);
-                bool c = b != null && b.HasBuff(TemperamentRules.BuffCurious);
-                bool pl = b != null && b.HasBuff(TemperamentRules.BuffPlayful);
-                bool pr = b != null && b.HasBuff(TemperamentRules.BuffProtective);
-                Log.Out($"[KitsuneCompanion] hud.diag: bind={bindingName} id={kitsune.entityId} status='{status}' S={s} C={c} P={pl} Pr={pr}");
-            }
 
             switch (bindingName)
             {
-                case "kitsuneName":   value = name;                  return true;
-                case "kitsuneStatus": value = status;                return true;
-                case "kitsuneVisible": value = has ? "true" : "false"; return true;
+                case "kitsuneName":
+                    value = has ? KitsuneNames.GetName(kitsune.entityId) : "";
+                    return true;
+                case "kitsuneStatus":
+                    value = has ? BuildStatusLine(kitsune) : "";
+                    return true;
+                case "kitsuneVisible":
+                    value = has ? "true" : "false";
+                    return true;
             }
             return base.GetBindingValueInternal(ref value, bindingName);
         }

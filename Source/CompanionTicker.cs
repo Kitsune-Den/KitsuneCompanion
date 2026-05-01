@@ -36,29 +36,7 @@ namespace KitsuneCompanion
                 }
             }
 
-            if (_diagTickCount++ % 15 == 0)
-            {
-                // Per-kitsune buff state dump so we can see if temperament
-                // is actually applied. Removed once status binding confirmed.
-                var detail = new System.Text.StringBuilder();
-                for (int i = 0; i < alives.Count; i++)
-                {
-                    var a = alives[i];
-                    if (a == null || !IsKitsune(a)) continue;
-                    var b = a.Buffs;
-                    string temp = "(none)";
-                    if (b != null)
-                    {
-                        if (b.HasBuff(TemperamentRules.BuffCurious))    temp = "Curious";
-                        else if (b.HasBuff(TemperamentRules.BuffProtective)) temp = "Protective";
-                        else if (b.HasBuff(TemperamentRules.BuffPlayful))    temp = "Playful";
-                        else if (b.HasBuff(TemperamentRules.BuffSerene))     temp = "Serene";
-                    }
-                    float bond = (b != null && b.HasCustomVar(BondRules.CvarBondPoints)) ? b.GetCustomVar(BondRules.CvarBondPoints) : 0f;
-                    detail.Append($" [id={a.entityId} temp={temp} bond={bond:F1}]");
-                }
-                Log.Out($"[KitsuneCompanion] tick: alives={alives.Count} kitsuneSeen={kitsuneSeen}{detail}");
-            }
+            _diagTickCount++;
         }
 
         // Fast tick (0.25s cadence): one-kitsune-per-player binding via
