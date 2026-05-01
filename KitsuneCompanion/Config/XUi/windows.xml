@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configs>
+
+    <!-- ============================================================
+         KITSUNE COMPANION HUD STATUS STRIP — Phase 2 skeleton
+         ============================================================
+         Sibling window to HUDLeftStatBars, anchored LeftBottom,
+         sitting just above the vanilla stat stack (Stealth/Stamina/
+         Health). Hardcoded text for now; data binding lands when the
+         XUiC_HUDKitsuneStatusStrip controller ships in C#.
+
+         Palette per reference_kitsune_den_ui_palette:
+           Foxfire primary  111,234,255,255   (kitsune element)
+           Panel Mid        25,25,25,240      (background)
+           Primary Text     220,220,220,255   (labels)
+    -->
+    <append xpath="/windows">
+
+        <window name="HUDKitsuneStatusStrip" anchor="LeftBottom">
+            <rect pos="9,260" width="280" height="40">
+
+                <!-- Background panel -->
+                <sprite depth="1" name="border" color="0,0,0,180" type="sliced"/>
+                <sprite depth="2" name="background" color="25,25,25,240" type="sliced"/>
+
+                <!-- Foxfire-tinted kitsune emblem (vanilla animal tracker icon for now;
+                     swap to custom kitsune emblem when assets land) -->
+                <sprite depth="3" name="Icon"
+                        sprite="ui_game_symbol_animal_tracker"
+                        color="111,234,255,255"
+                        size="30,30" pos="9,-5" pivot="topleft"
+                        foregroundlayer="true"/>
+
+                <!-- Name (top line) -->
+                <label depth="4" name="KitsuneName"
+                       pos="48,-2" font_size="22"
+                       color="220,220,220,255"
+                       justify="left" pivot="topleft"
+                       text="Akari"
+                       width="220" height="22"/>
+
+                <!-- Status (bottom line): temperament + bond tier + percent -->
+                <label depth="5" name="KitsuneStatus"
+                       pos="48,-22" font_size="16"
+                       color="111,234,255,220"
+                       justify="left" pivot="topleft"
+                       text="Curious - Trusted 60%"
+                       width="220" height="16"/>
+
+            </rect>
+        </window>
+
+    </append>
+
+</configs>
