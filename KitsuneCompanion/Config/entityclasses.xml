@@ -44,16 +44,11 @@
                  on the kitsune each fast tick. Requires 0-SCore mod. -->
             <property name="AIPackages" value="KitsuneCompanionAI" />
 
-            <!-- Silence the yappy coyote — vocalizations were getting
-                 spammy. Override inherited Sound* to empty. Step sounds
-                 kept (footstep audio is fine). Pillows and dreams. -->
+            <!-- Mute idle ambient barks (SoundRandom) — they're the annoying
+                 part. Event-triggered sounds (alert, attack, hurt, death,
+                 sense, giveup) inherit normally; those fire on real beats
+                 and are useful audio cues. -->
             <property name="SoundRandom" value="" />
-            <property name="SoundAlert" value="" />
-            <property name="SoundAttack" value="" />
-            <property name="SoundHurt" value="" />
-            <property name="SoundDeath" value="" />
-            <property name="SoundSense" value="" />
-            <property name="SoundGiveUp" value="" />
 
             <effect_group name="Base Effects">
                 <passive_effect name="HealthMax" operation="base_set" value="120" />
