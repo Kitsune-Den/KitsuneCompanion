@@ -64,10 +64,14 @@ namespace KitsuneCompanion
                 }
                 else if (dist > FollowStartDistance)
                 {
-                    // SetInvestigatePosition every fast tick so Wander never
-                    // gets a chance to fire. NO moveHelper.SetMoveTo here —
-                    // that bypassed the animator and caused the visible slide.
-                    alive.SetInvestigatePosition(player.position, 600, false);
+                    // Direct navigator path. SetInvestigatePosition was
+                    // sliding (position warped without animator engaging
+                    // the walk blend tree). ASPPathNavigate.CreatePathToEntity
+                    // is what the engine uses internally for animated pursuit
+                    // — wolves chasing players use this layer.
+                    var asp = alive.navigator as GamePath.ASPPathNavigate;
+                    if (asp != null)
+                        asp.CreatePathToEntity(alive, player);
                 }
                 else
                 {
