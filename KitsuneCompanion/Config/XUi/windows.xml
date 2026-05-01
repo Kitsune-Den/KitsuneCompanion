@@ -19,7 +19,7 @@
 
         <window name="HUDKitsuneStatusStrip"
                 anchor="LeftBottom"
-                controller="XUiC_KitsuneStatusStrip">
+                controller="KitsuneCompanion.XUiC_KitsuneStatusStrip, KitsuneCompanion">
 
             <rect pos="9,260" width="280" height="40"
                   visible="{kitsuneVisible}">
