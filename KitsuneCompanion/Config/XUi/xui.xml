@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configs>
+
+    <!-- Register HUDKitsuneStatusStrip in the toolbelt window_group so the
+         XUi system actually instantiates it. Defining the window in
+         windows.xml alone is not enough — it has to be a member of an
+         instantiated window_group. The 'toolbelt' group has actionSet="false"
+         (always-on overlay), which is what we want for a HUD strip. -->
+    <append xpath="/xui/ruleset[@name='default']/window_group[@name='toolbelt']">
+        <window name="HUDKitsuneStatusStrip" />
+    </append>
+
+</configs>
