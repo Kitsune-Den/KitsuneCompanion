@@ -29,20 +29,26 @@
         -->
         <window name="windowKitsuneCompanionPanel"
                 width="327" height="704"
-                panel="Right"
+                anchor="RightTop"
                 cursor_area="true">
 
-            <!-- Header bar -->
-            <panel name="header" height="43" depth="1" backgroundspritename="ui_game_panel_header">
-                <sprite depth="2" name="windowIcon" style="icon32px" pos="5,-5"
-                        sprite="ui_game_symbol_animal_tracker" color="111,234,255,255"/>
-                <label depth="2" name="title" pos="42,-6" width="280" height="32"
-                       text="KITSUNE COMPANION" font_size="28" color="220,220,220,255"/>
-            </panel>
+            <!-- Pull the whole content rect into the top-right corner so it
+                 stacks at the same height as the LEFT-anchored CharacterFrame.
+                 panel="Right" was auto-docking us BELOW the inventory grid
+                 instead of beside it. -->
+            <rect pos="-336,-46" width="327" height="704">
 
-            <!-- Body -->
-            <rect pos="0,-46" width="327" height="658">
-                <sprite depth="1" name="background" color="25,25,25,240" type="sliced"/>
+                <!-- Header bar -->
+                <panel name="header" height="43" depth="1" backgroundspritename="ui_game_panel_header">
+                    <sprite depth="2" name="windowIcon" style="icon32px" pos="5,-5"
+                            sprite="ui_game_symbol_animal_tracker" color="111,234,255,255"/>
+                    <label depth="2" name="title" pos="42,-6" width="280" height="32"
+                           text="KITSUNE COMPANION" font_size="28" color="220,220,220,255"/>
+                </panel>
+
+                <!-- Body -->
+                <rect pos="0,-46" width="327" height="658">
+                    <sprite depth="1" name="background" color="25,25,25,240" type="sliced"/>
 
                 <!-- Form row -->
                 <rect pos="9,-9" width="309" height="60">
@@ -80,16 +86,17 @@
                            text="(Feed / Pet / Recall — Phase 2c)" font_size="14" color="120,120,120,220"/>
                 </rect>
 
-                <!-- Companion Perks row -->
-                <rect pos="9,-293" width="309" height="80">
-                    <sprite depth="2" name="border" color="0,0,0,128" type="sliced"/>
-                    <label depth="3" pos="9,-6" width="200" height="22"
-                           text="COMPANION PERKS" font_size="18" color="200,160,80,255"/>
-                    <label depth="3" pos="9,-50" width="290" height="22"
-                           text="(Resource Sense, Night Prowl, Pack Instinct)"
-                           font_size="14" color="120,120,120,220"/>
-                </rect>
+                    <!-- Companion Perks row -->
+                    <rect pos="9,-293" width="309" height="80">
+                        <sprite depth="2" name="border" color="0,0,0,128" type="sliced"/>
+                        <label depth="3" pos="9,-6" width="200" height="22"
+                               text="COMPANION PERKS" font_size="18" color="200,160,80,255"/>
+                        <label depth="3" pos="9,-50" width="290" height="22"
+                               text="(Resource Sense, Night Prowl, Pack Instinct)"
+                               font_size="14" color="120,120,120,220"/>
+                    </rect>
 
+                </rect>
             </rect>
         </window>
 
