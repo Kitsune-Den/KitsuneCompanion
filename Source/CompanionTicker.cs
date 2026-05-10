@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace KitsuneCompanion
@@ -6,6 +7,72 @@ namespace KitsuneCompanion
     {
         private const string EntityClassName = "kitsuneCompanion";
 
+        // Cached KitsuneController loaded once from the bundle. The prefab's
+        // serialized reference to it doesn't auto-resolve at instantiation,
+        // so we hunt it down ourselves and assign per-entity.
+        private static RuntimeAnimatorController _cachedController;
+        private static bool _cachedControllerSearched;
+
+        private static RuntimeAnimatorController LoadCachedController()
+        {
+            if (_cachedController != null) return _cachedController;
+
+            // First try: it might already be in memory (loaded from a sibling
+            // bundle or already-deserialized).
+            var inMemory = Resources.FindObjectsOfTypeAll<RuntimeAnimatorController>();
+            foreach (var rac in inMemory)
+            {
+                if (rac != null && rac.name == "KitsuneController")
+                {
+                    _cachedController = rac;
+                    return _cachedController;
+                }
+            }
+
+            // Second try: scan loaded asset bundles and load explicitly.
+            // Cache the search-done flag so we don't iterate every frame.
+            if (!_cachedControllerSearched)
+            {
+                _cachedControllerSearched = true;
+                foreach (var bundle in AssetBundle.GetAllLoadedAssetBundles())
+                {
+                    if (bundle == null) continue;
+                    try
+                    {
+                        var rac = bundle.LoadAsset<RuntimeAnimatorController>("KitsuneController");
+                        if (rac != null)
+                        {
+                            _cachedController = rac;
+                            Log.Out($"[KitsuneCompanion] Loaded KitsuneController from bundle '{bundle.name}'.");
+                            return _cachedController;
+                        }
+                    }
+                    catch { /* not the right bundle */ }
+                }
+            }
+
+            return null; // no luck this frame; will retry on next animator wake
+        }
+
+        // Forced follow speed for direct-translate bypass. 7DTD's navigator
+        // hard-caps animal entities at a slow pace regardless of MoveSpeed XML
+        // or passive_effect WalkSpeed/RunSpeed. Bypassing via SetPosition lets
+        // us actually keep up with the player.
+        private const float ForcedNavigatorSpeed = 8.0f;
+
+        // Look up which player has claimed this kitsune via the Leader cvar
+        // we set in TickFollow. Returns null if not yet claimed.
+        private static EntityPlayer FindLeaderForKitsune(EntityAlive kitsune)
+        {
+            var buffs = kitsune.Buffs;
+            if (buffs == null || !buffs.HasCustomVar("Leader")) return null;
+            int leaderId = (int)buffs.GetCustomVar("Leader");
+            if (leaderId <= 0) return null;
+            var world = GameManager.Instance?.World;
+            if (world == null) return null;
+            var entity = world.GetEntity(leaderId);
+            return entity as EntityPlayer;
+        }
         // Bumped from 30 to 80 so a kitsune the HUD widget binds to (60m
         // search) is also managed by the heavy tick. Otherwise kitsunes
         // in the 30-60m gap have their temperament cleared and the widget
@@ -15,8 +82,6 @@ namespace KitsuneCompanion
         private const float TalismanRange = 8f;
         private const float BondAccrualRange = 12f;
 
-        private static int _diagTickCount;
-
         // Heavy tick (2s cadence in ModApi): skin, talisman, charm, bond
         // accrual, tier swap, temperament selection. Bond accrual rate is
         // calibrated against this cadence — don't tick this faster.
@@ -25,18 +90,109 @@ namespace KitsuneCompanion
             var alives = world.EntityAlives;
             if (alives == null) return;
 
-            int kitsuneSeen = 0;
             for (int i = 0; i < alives.Count; i++)
             {
                 var alive = alives[i];
                 if (alive != null && IsKitsune(alive))
                 {
-                    kitsuneSeen++;
                     UpdateKitsune(alive, world);
                 }
             }
+        }
 
-            _diagTickCount++;
+        // Per-frame tick: wake the Animator on each kitsune so 7DTD's entity
+        // setup can't suppress idle/walk/run from playing. We theorize that
+        // EntityEnemyAnimal disables the Animator and waits for AvatarController
+        // to drive it, but our Red Fox prefab + KitsuneController don't speak
+        // the AvatarAnimalController dialect, so the animator stays enabled=
+        // false / speed=0 forever. Force-resetting both every frame should
+        // confirm the theory and unfreeze locomotion at the same time.
+        //
+        // Diagnostic: logs the Animator's state ONCE per entity on first sight,
+        // then keeps force-waking silently. The log line shows what 7DTD did
+        // to the animator BEFORE our reset ran.
+        public static void WakeAnimators(World world)
+        {
+            var alives = world.EntityAlives;
+            if (alives == null) return;
+
+            for (int i = 0; i < alives.Count; i++)
+            {
+                var alive = alives[i];
+                if (alive == null || !IsKitsune(alive)) continue;
+
+                var animator = alive.GetComponentInChildren<Animator>();
+                if (animator == null) continue;
+
+                // Force-wake every frame. Cheap (two property writes) and
+                // robust to whatever 7DTD does between our ticks.
+                if (!animator.enabled) animator.enabled = true;
+                if (animator.speed < 0.01f) animator.speed = 1f;
+
+                // Nuclear option: drive transform directly toward leader.
+                // Every move-speed knob (XML MoveSpeed, passive_effects,
+                // navigator.setMoveSpeed, animator.speed) failed to change
+                // observed world velocity. Bypass navigator entirely:
+                // compute desired direction, lerp transform toward it at
+                // ForcedNavigatorSpeed m/s. Anim continues to play in
+                // sync. Skip if no leader (let entity idle).
+                try
+                {
+                    var leader = FindLeaderForKitsune(alive);
+                    if (leader != null)
+                    {
+                        Vector3 toLeader = leader.position - alive.position;
+                        toLeader.y = 0f;
+                        float dist = toLeader.magnitude;
+                        if (dist > 1.5f && dist < 60f) // follow band
+                        {
+                            Vector3 dir = toLeader / dist;
+                            float step = ForcedNavigatorSpeed * Time.deltaTime;
+                            if (step > dist - 1.5f) step = dist - 1.5f;
+                            alive.SetPosition(alive.position + dir * step, true);
+
+                            // Face direction of travel (smooth rotation).
+                            if (dir.sqrMagnitude > 0.0001f)
+                            {
+                                Quaternion target = Quaternion.LookRotation(dir, Vector3.up);
+                                alive.transform.rotation = Quaternion.Slerp(
+                                    alive.transform.rotation, target, 8f * Time.deltaTime);
+                            }
+
+                            // Manually feed Forward so the animator plays
+                            // walk/run instead of staying at idle. SetPosition
+                            // bypasses the speedForward computation, so the
+                            // animator never knows it's "moving" unless we say.
+                            try { animator.SetFloat("Forward", 0.5f); } catch { }
+                        }
+                        else if (dist <= 1.5f)
+                        {
+                            // Close enough — clear navigator path so vanilla
+                            // AI / Wander task doesn't path the entity away,
+                            // and reset Forward to 0 so animator returns to idle.
+                            try { alive.navigator?.clearPath(); } catch { }
+                            try { animator.SetFloat("Forward", 0f); } catch { }
+                        }
+                    }
+                }
+                catch { }
+
+                // Bundle reference resolution quirk: the prefab serializes
+                // a reference to KitsuneController, but at instantiation
+                // time the controller asset hasn't been deserialized into
+                // memory (only the prefab itself was). Force-load it from
+                // the bundle directly so the reference can be wired.
+                if (animator.runtimeAnimatorController == null)
+                {
+                    var rac = LoadCachedController();
+                    if (rac != null)
+                    {
+                        animator.runtimeAnimatorController = rac;
+                        Log.Out($"[KitsuneCompanion] Force-assigned KitsuneController to entity {alive.entityId}");
+                    }
+                }
+
+            }
         }
 
         // Fast tick (0.25s cadence): one-kitsune-per-player binding via

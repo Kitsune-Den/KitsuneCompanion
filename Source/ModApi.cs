@@ -32,6 +32,12 @@ namespace KitsuneCompanion
 
             float now = Time.time;
 
+            // Per-frame: keep kitsune Animators awake. Theory is that 7DTD's
+            // entity setup disables them and only AvatarAnimalController
+            // re-enables — our prefab doesn't speak that dialect, so we
+            // force-wake. Cheap (two property writes per kitsune).
+            CompanionTicker.WakeAnimators(world);
+
             if (now >= _nextFollowTick)
             {
                 _nextFollowTick = now + FollowTickInterval;
