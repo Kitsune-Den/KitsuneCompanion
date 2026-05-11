@@ -144,35 +144,60 @@ namespace KitsuneCompanion
                         Vector3 toLeader = leader.position - alive.position;
                         toLeader.y = 0f;
                         float dist = toLeader.magnitude;
-                        if (dist > 1.5f && dist < 60f) // follow band
+
+                        const float StopDist = 2.5f;
+
+                        // ALWAYS rotate toward the leader when one exists —
+                        // not just when moving. Otherwise the fox keeps the
+                        // rotation it had when it last stopped, which looks
+                        // wrong when the player has since turned around.
+                        //
+                        // Set entity.rotation (Vector3 euler) instead of just
+                        // transform.rotation — 7DTD's avatar controller reads
+                        // from the entity Vector3 each frame and overwrites
+                        // any transform.rotation we set. Also poke the
+                        // transform directly so the visual is immediate.
+                        if (dist > 0.05f)
+                        {
+                            Vector3 dir = toLeader / dist;
+                            float targetYaw = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+                            Vector3 currentRot = alive.rotation;
+                            float newYaw = Mathf.LerpAngle(currentRot.y, targetYaw, 14f * Time.deltaTime);
+                            alive.SetRotation(new Vector3(currentRot.x, newYaw, currentRot.z));
+                        }
+
+                        if (dist > StopDist && dist < 60f) // follow band
                         {
                             Vector3 dir = toLeader / dist;
                             float step = ForcedNavigatorSpeed * Time.deltaTime;
-                            if (step > dist - 1.5f) step = dist - 1.5f;
+                            if (step > dist - StopDist) step = dist - StopDist;
                             alive.SetPosition(alive.position + dir * step, true);
-
-                            // Face direction of travel (smooth rotation).
-                            if (dir.sqrMagnitude > 0.0001f)
-                            {
-                                Quaternion target = Quaternion.LookRotation(dir, Vector3.up);
-                                alive.transform.rotation = Quaternion.Slerp(
-                                    alive.transform.rotation, target, 8f * Time.deltaTime);
-                            }
-
-                            // Manually feed Forward so the animator plays
-                            // walk/run instead of staying at idle. SetPosition
-                            // bypasses the speedForward computation, so the
-                            // animator never knows it's "moving" unless we say.
-                            try { animator.SetFloat("Forward", 0.5f); } catch { }
                         }
-                        else if (dist <= 1.5f)
+                        else if (dist <= StopDist)
                         {
-                            // Close enough — clear navigator path so vanilla
-                            // AI / Wander task doesn't path the entity away,
-                            // and reset Forward to 0 so animator returns to idle.
+                            // Close enough — actively suppress all vanilla AI
+                            // movement intent. Without this:
+                            //   - navigator queues a path → fox walks away
+                            //   - moveHelper has lingering "go this way" state
+                            //     → fox jumps + plays run anim
+                            //   - speedForward != 0 → animator stays in Run state
+                            // We zero them out every frame so the fox actually
+                            // sits still.
                             try { alive.navigator?.clearPath(); } catch { }
-                            try { animator.SetFloat("Forward", 0f); } catch { }
+                            try { alive.moveHelper?.Stop(); } catch { }
+                            try { alive.speedForward = 0f; } catch { }
+                            try { alive.speedStrafe = 0f; } catch { }
+                            try { alive.ClearInvestigatePosition(); } catch { }
                         }
+
+                        // Smooth-damp the Forward animator param toward target
+                        // (0.5 when chasing, 0 when stopped). The third arg is
+                        // the smoothing time in seconds — short enough to feel
+                        // responsive, long enough that the Animator's Run→Idle
+                        // crossfade has time to blend properly instead of
+                        // looking like the fox is moonwalking in place.
+                        float targetForward = (dist > StopDist) ? 0.5f : 0f;
+                        try { animator.SetFloat("Forward", targetForward, 0.15f, Time.deltaTime); } catch { }
                     }
                 }
                 catch { }
