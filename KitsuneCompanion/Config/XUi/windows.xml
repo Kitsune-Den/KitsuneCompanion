@@ -36,6 +36,13 @@
                 cursor_area="true"
                 controller="KitsuneCompanion.XUiC_KitsuneCompanionPanel, KitsuneCompanion">
 
+            <!-- Wrapping rect with a visible binding hides the entire panel
+                 (header + body) when no kitsune is in range. Empty "—"
+                 placeholders look worse than just nothing in the player's
+                 menu space. -->
+            <rect name="panelContainer" width="327" height="524"
+                  visible="{kitsunePanelVisible}">
+
             <!-- Header bar -->
             <panel name="header" height="43" depth="1" backgroundspritename="ui_game_panel_header">
                 <sprite depth="2" name="windowIcon" style="icon32px" pos="5,-5"
@@ -95,6 +102,8 @@
                 </rect>
 
             </rect>
+
+            </rect><!-- /panelContainer -->
         </window>
 
         <window name="HUDKitsuneStatusStrip"

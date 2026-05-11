@@ -35,6 +35,11 @@ namespace KitsuneCompanion
 
             switch (bindingName)
             {
+                case "kitsunePanelVisible":
+                    // Hide the entire panel when no kitsune is in range —
+                    // empty "—" placeholders look uglier than just nothing.
+                    value = has ? "true" : "false";
+                    return true;
                 case "kitsunePanelName":
                     value = has ? KitsuneNames.GetName(kitsune.entityId) : Placeholder;
                     return true;
