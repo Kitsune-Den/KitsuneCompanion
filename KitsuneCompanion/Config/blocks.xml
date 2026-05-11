@@ -18,8 +18,8 @@
 
             <property name="Material" value="Mwood_weak"/>
             <property name="Shape" value="ModelEntity"/>
-            <property name="Model" value="@:Entities/Crafting/woodWorkBenchPrefab.prefab"/>
-            <property name="ModelOffset" value="0,.5,0"/>
+            <property name="Model" value="#@modfolder:Resources/Bundles/Kitsune.unity3d?kitsuneShrineRoot"/>
+            <property name="ModelOffset" value="0,1.2,0"/>
             <property name="MultiBlockDim" value="1,1,1"/>
             <property name="ImposterDontBlock" value="true"/>
             <property name="WaterFlow" value="permitted"/>
