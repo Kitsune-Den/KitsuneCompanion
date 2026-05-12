@@ -18,6 +18,7 @@ buffKitsuneSereneAuraName,buffs,Buff,,,Soothed
 buffKitsuneSereneAuraDesc,buffs,Buff,,,A serene kitsune nearby is mending your wounds.
 kitsuneShrine,blocks,Block,,,Kitsune Shrine
 kitsuneShrineDesc,blocks,Block,,,A small ritual altar. Burn ritual offerings here to bond with and shape your kitsune companion.
+kitsuneShrineActivate,blocks,Block,,,Offer at Shrine
 kitsuneSpiritEmber,items,Item,,,Spirit Ember
 kitsuneSpiritEmberDesc,items,Item,,,A coal that never quite cools. Required for kitsune rituals.
 kitsuneMoonlitResin,items,Item,,,Moonlit Resin
@@ -36,6 +37,8 @@ buffKitsuneBondBoundName,buffs,Buff,,,Bound
 buffKitsuneBondBoundDesc,buffs,Buff,,,The kitsune is bound to you. Wounds close even when at rest.
 buffKitsuneBondKindredName,buffs,Buff,,,Kindred
 buffKitsuneBondKindredDesc,buffs,Buff,,,Kindred. Sturdier, swifter to mend, slower to fall — yours, and you, theirs.
+buffKitsuneCinderwardHoTName,buffs,Buff,,,Cinderward
+buffKitsuneCinderwardHoTDesc,buffs,Buff,,,She caught you. Foxfire knits the wound for a few breaths.
 buffKitsuneFormMistName,buffs,Buff,,,Mist Form
 buffKitsuneFormMistDesc,buffs,Buff,,,The kitsune walks half in the world and half through it. Hops to your side from far away; veils you in mist when you crouch.
 buffKitsuneStealthAuraName,buffs,Buff,,,Mist-Veiled

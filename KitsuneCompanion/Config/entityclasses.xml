@@ -95,4 +95,24 @@
 
     </append>
 
+    <!-- Grant the Foxfire Pouch (starter Tail-Space buff, +18 BagSize) to
+         every player automatically on spawn. The buff is hidden and
+         permanent, so this fires once on the first onSelfBuffUpdate tick
+         after spawn and stays applied for the character's life. Higher
+         tiers (Satchel/Den-Bag/Tail-Space) are gated behind future quest
+         rewards and are NOT applied here.
+
+         Note: playerFemale extends playerMale in vanilla, so the trigger
+         propagates to both via inheritance. -->
+    <append xpath="/entity_classes/entity_class[@name='playerMale']">
+        <effect_group name="Foxfire Tail-Space (starter)">
+            <triggered_effect trigger="onSelfBuffUpdate"
+                              action="AddBuff"
+                              buff="buffKitsuneFoxfirePouch"
+                              target="self">
+                <requirement name="!HasBuff" buff="buffKitsuneFoxfirePouch"/>
+            </triggered_effect>
+        </effect_group>
+    </append>
+
 </configs>

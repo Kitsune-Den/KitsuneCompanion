@@ -203,8 +203,12 @@
             <stack_type value="replace"/>
             <duration value="0"/>
 
+            <!-- Bonded Breath (Foxfire perk, tier 1):
+                   "Run with them. They steady your wind."
+                 Stamina regen +15% — the kitsune extends their endurance
+                 to you. No HP boost at this tier; that's T2's gift. -->
             <effect_group>
-                <passive_effect name="HealthMax" operation="perc_add" value="0.05"/>
+                <passive_effect name="StaminaChangeOT"  operation="perc_add" value="0.15"/>
             </effect_group>
         </buff>
 
@@ -216,6 +220,9 @@
             <stack_type value="replace"/>
             <duration value="0"/>
 
+            <!-- Stout Heart (Foxfire perk, tier 2):
+                   "She's lent you weight. You will not break as easily."
+                 +10% HP. The bond becomes a measurable resilience. -->
             <effect_group>
                 <passive_effect name="HealthMax" operation="perc_add" value="0.10"/>
             </effect_group>
@@ -229,9 +236,100 @@
             <stack_type value="replace"/>
             <duration value="0"/>
 
+            <!-- Cinderward (Foxfire perk, tier 3):
+                   "She catches you when you start to fall. Once she
+                    catches, give her a moment before she can again."
+                 When the player's HP drops below 25%, apply the
+                 Cinderward HoT (defined below) and start the 3-min
+                 cooldown buff to prevent re-trigger until ready. -->
             <effect_group>
-                <passive_effect name="HealthMax" operation="perc_add" value="0.20"/>
-                <passive_effect name="HealthChangeOT" operation="base_add" value="1"/>
+                <triggered_effect trigger="onSelfBuffUpdate"
+                                  action="AddBuff"
+                                  buff="buffKitsuneCinderwardHoT"
+                                  target="self">
+                    <requirement name="StatComparePercModMaxToMax" stat="Health" operation="LT" value="0.25"/>
+                    <requirement name="!HasBuff" buff="buffKitsuneCinderwardCooldown"/>
+                    <requirement name="!HasBuff" buff="buffKitsuneCinderwardHoT"/>
+                </triggered_effect>
+                <triggered_effect trigger="onSelfBuffUpdate"
+                                  action="AddBuff"
+                                  buff="buffKitsuneCinderwardCooldown"
+                                  target="self">
+                    <requirement name="StatComparePercModMaxToMax" stat="Health" operation="LT" value="0.25"/>
+                    <requirement name="!HasBuff" buff="buffKitsuneCinderwardCooldown"/>
+                    <requirement name="!HasBuff" buff="buffKitsuneCinderwardHoT"/>
+                </triggered_effect>
+            </effect_group>
+        </buff>
+
+        <!-- Cinderward heal-over-time. +5 HP/s for 6s = 30 HP total. -->
+        <buff name="buffKitsuneCinderwardHoT"
+              name_key="buffKitsuneCinderwardHoTName"
+              description_key="buffKitsuneCinderwardHoTDesc"
+              icon="ui_game_symbol_health"
+              icon_color="111,234,255">
+            <stack_type value="replace"/>
+            <duration value="6"/>
+
+            <effect_group>
+                <passive_effect name="HealthChangeOT" operation="base_add" value="5"/>
+            </effect_group>
+        </buff>
+
+        <!-- Cinderward 3-minute cooldown. Invisible timer buff that blocks
+             re-trigger. -->
+        <buff name="buffKitsuneCinderwardCooldown"
+              hidden="true">
+            <stack_type value="replace"/>
+            <duration value="180"/>
+        </buff>
+
+        <!-- ============================================================
+             FOXFIRE TAIL-SPACE BAGS — invisible permanent BagSize buffs.
+             ============================================================
+             Lore: the Kitsune Lady "folds space" through her foxes,
+             giving the player extra inventory. Four tiers, granted at
+             game start (Pouch) and as quest rewards (Satchel/DenBag/
+             TailSpace) — quest infra not built yet, only Pouch is
+             auto-applied. All stack additively (base_add):
+
+               Foxfire Pouch    +18  (starter, given on spawn) →  63
+               Foxfire Satchel  +18  (Trusted quest reward)    →  81
+               Folded Den-Bag   +27  (Bound quest reward)      → 108
+               Tail-Space       +27  (Kindred quest reward)    → 135
+
+             All hidden — the player feels the slots, not a UI buff
+             ticker. The narrative is "she gave you this," not "you
+             have a status effect." -->
+        <buff name="buffKitsuneFoxfirePouch" hidden="true">
+            <stack_type value="replace"/>
+            <duration value="0"/>
+            <effect_group>
+                <passive_effect name="BagSize" operation="base_add" value="18"/>
+            </effect_group>
+        </buff>
+
+        <buff name="buffKitsuneFoxfireSatchel" hidden="true">
+            <stack_type value="replace"/>
+            <duration value="0"/>
+            <effect_group>
+                <passive_effect name="BagSize" operation="base_add" value="18"/>
+            </effect_group>
+        </buff>
+
+        <buff name="buffKitsuneFoldedDenBag" hidden="true">
+            <stack_type value="replace"/>
+            <duration value="0"/>
+            <effect_group>
+                <passive_effect name="BagSize" operation="base_add" value="27"/>
+            </effect_group>
+        </buff>
+
+        <buff name="buffKitsuneTailSpace" hidden="true">
+            <stack_type value="replace"/>
+            <duration value="0"/>
+            <effect_group>
+                <passive_effect name="BagSize" operation="base_add" value="27"/>
             </effect_group>
         </buff>
 
